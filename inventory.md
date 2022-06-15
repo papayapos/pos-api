@@ -1,12 +1,12 @@
 **Endpoint: /api/v1/inventory**
 
-[Get](#markdown-header-get)
+[Get](GET)
 
-[Create or Update](#markdown-header-update)
+[Create or Update](#UPDATE)
 
-[Delete](#markdown-header-delete)
+[Delete](#DELETE)
 
-Inventories allow users to track amounts of [items](https://bitbucket.org/papayapos/papayapos/wiki/Item). Furthermore, users can create multiple inventories and track amount of items in each of them separately. Amount of item in each inventory is calculated from [cards](https://bitbucket.org/papayapos/papayapos/wiki/Card), initially starting on zero. 
+Inventories allow users to track amounts of [items](item.md). Furthermore, users can create multiple inventories and track amount of items in each of them separately. Amount of item in each inventory is calculated from [cards](card.md), initially starting on zero. 
 
 ### GET ###
 
@@ -22,19 +22,19 @@ For getting current state of inventories we have multiple options, from getting 
 
 **Request data**
 
-| field name  |               type               | Description                                                 |
-| :---------- | :------------------------------: | :---------------------------------------------------------- |
-| inventories | array of inventory query objects | Each object contains inventory id and may contain item ids. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+| inventories  | array of inventory query objects | Each object contains inventory id and may contain item ids. |
 
 **Inventory query**
 
-| field name  |       type       | Description                               |
-| :---------- | :--------------: | :---------------------------------------- |
-| inventoryId |      number      | id of inventory to fetch                  |
-| itemIds     | array of numbers | Long, ids of items to fetch for inventory |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+| inventoryId  | number | id of inventory to fetch |
+| itemIds| array of numbers | Long, ids of items to fetch for inventory | 
 
 > `inventoryId` required
->
+> 
 > `itemIds` are optional and can be used to limit what should be fetched from API. In case you only want specific items, this field can be used to reduce calculation time as well as payload of response.
 
 **Request Examples**
@@ -101,19 +101,19 @@ Of course it is also possible to combine both types of queries. In example below
 
 **Response**
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
+|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
+| error | string | Error message with cause of failure. This field is only set if success is false. |
 
 Contents of data for this response:
 
-Response contains inventory objects with current state of items in it, items are stored in group objects. For the definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Response contains inventory objects with current state of items in it, items are stored in group objects. For the definition of objects refer to the [Object documentation](storehouse%20objects.md).
 
-| field name  |            type            | Description                                                  |
-| :---------- | :------------------------: | :----------------------------------------------------------- |
-| inventories | array of inventory objects | Inventories that match requested ids. Field will contain empty array if there are no matches. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+| inventories | array of inventory objects | Inventories that match requested ids. Field will contain empty array if there are no matches.
 
 **Response Example**
 
@@ -170,15 +170,15 @@ For creating inventories you have these options.
 >
 > Updating deleted inventory will restore it, including cards.
 
-You might expect that updating amounts would also be part of inventory api. That is not the case as there is a lot of information that Papaya allows you to record in inventory movements. If you want to update amounts or average price of items, you should check [card](https://bitbucket.org/papayapos/papayapos/wiki/Card) endpoint. As for updating other item data you should check [item](https://bitbucket.org/papayapos/papayapos/wiki/Item) endpoint.
+You might expect that updating amounts would also be part of inventory api. That is not the case as there is a lot of information that Papaya allows you to record in inventory movements. If you want to update amounts or average price of items, you should check [card](card.md) endpoint. As for updating other item data you should check [item](item.md) endpoint.
 
 **Request data**
 
-| field name  |            type            | Description                     |
-| :---------- | :------------------------: | :------------------------------ |
-| inventories | array of inventory objects | Inventories to create or update |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+| inventories  | array of inventory objects | Inventories to create or update |
 
-> `groups` field in inventory object is only relevant for [get](#markdown-header-get) and [delete](#markdown-header-delete) requests and will be ignored in update requests.
+> `groups` field in inventory object is only relevant for [get](#GET) and [delete](#DELETE) requests and will be ignored in update requests.
 
 If you provide inventory without *id*, API will return error 2.
 
@@ -204,18 +204,18 @@ For simplicity of example, there is only one inventory in array. Of course you c
 
 Successful update request will return array of inventory objects that were created or updated. If there is any problem and response `success` field is false, then there will be no changes to data and you need to resend request.
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
+|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
+| error | string | Error message with cause of failure. This field is only set if success is false. |
 
 Contents of data for this response:
 
-Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](storehouse%20objects) in wiki.
 
-| field name |            type            | Description                    |
-| :--------- | :------------------------: | :----------------------------- |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
 | inventores | array of inventory objects | Created or updated inventories |
 
 **Response Example**
@@ -247,9 +247,9 @@ API keeps track of deleted inventories. In case you want to restore them, you ca
 
 **Request data**
 
-| field name |       type       | Description                       |
-| :--------- | :--------------: | :-------------------------------- |
-| ids        | array of numbers | ids of inventories to be deleted. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+| ids | array of numbers | ids of inventories to be deleted.|
 
 **Request Example**
 
@@ -266,18 +266,18 @@ API keeps track of deleted inventories. In case you want to restore them, you ca
 
 Successful delete request will return array of inventory objects that were deleted. If there is any problem and response *success* field is false, then there were no changes to data and you need to resend request.
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
+|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
+|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
+| error | string | Error message with cause of failure. This field is only set if success is false. |
 
 Contents of data for this response:
 
-Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](storehouse%20objects) in wiki.
 
-| field name  |            type            | Description                                                  |
-| :---------- | :------------------------: | :----------------------------------------------------------- |
+| field name  | type        | Description   |
+| :---        |    :----:   | :---          |
 | inventories | array of inventory objects | Deleted inventories. Note that field *groups* will not be set even if inventory is not empty. |
 
 > `groups` field will not be set in response.
