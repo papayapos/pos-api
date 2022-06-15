@@ -1,12 +1,12 @@
 **Endpoint: /api/v1/inventory/card**
 
-[Get](#markdown-header-get)
+[Get](#GET)
 
-[Create or Update](#markdown-header-update)
+[Create or Update](#UPDATE)
 
-[Delete](#markdown-header-delete)
+[Delete](#DELETE)
 
-Cards are used to record movement of items in inventories. Allowing user to record detailed information about supplier, type of movement, item, prices and more. Each card contains array of items that describe changes to [stock items](https://bitbucket.org/papayapos/papayapos/wiki/Item).
+Cards are used to record movement of items in inventories. Allowing user to record detailed information about supplier, type of movement, item, prices and more. Each card contains array of items that describe changes to [stock items](item.md).
 
 ### Get
 
@@ -84,7 +84,7 @@ For getting cards that are between `from` and `to`, with additional parameters:
 
 **Response**
 
-Response contains array of card objects. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Response contains array of card objects. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -231,7 +231,7 @@ API always deletes or overwrites previous card items. Because of this it is viab
 
 **Response**
 
-Response contains array of card objects with their supplier and items. If you are planning to use item `id`s you should store them now.  For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Response contains array of card objects with their supplier and items. If you are planning to use item `id`s you should store them now.  For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -303,7 +303,7 @@ Contents of data for this response:
 
 ### Delete
 
-For deleting cards only option is to use their `ids`. It is important to note that card items cannot exist without card and will be deleted along with the card. Deleting card does not affect supplier in case it was stored using [supplier](https://bitbucket.org/papayapos/papayapos/wiki/Supplier) endpoint.
+For deleting cards only option is to use their `ids`. It is important to note that card items cannot exist without card and will be deleted along with the card. Deleting card does not affect supplier in case it was stored using [supplier](supplier.md) endpoint.
 
 **Request data**
 
@@ -323,7 +323,7 @@ For deleting cards only option is to use their `ids`. It is important to note th
 ```
 **Response**
 
-Successful delete request will return array of card objects that were deleted. If there are any problems and response success field is false, then there will be no changes to stored data.  For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Successful delete request will return array of card objects that were deleted. If there are any problems and response success field is false, then there will be no changes to stored data.  For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 
 | field name |    type     | Description                                                  |
