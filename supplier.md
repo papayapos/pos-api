@@ -1,12 +1,12 @@
 **Endpoint: /api/v1/supplier**
 
-[Get](#markdown-header-get)
+[Get](#GET)
 
-[Create or Update](#markdown-header-update)
+[Create or Update](#UPDATE)
 
-[Delete](#markdown-header-delete)
+[Delete](#DELETE)
 
-Supplier endpoint allows user to store information about suppliers that are frequently used, saving time and work when creating new inventory cards. For usage of suppliers refer to [card](https://bitbucket.org/papayapos/papayapos/wiki/Card) endpoint.
+Supplier endpoint allows user to store information about suppliers that are frequently used, saving time and work when creating new inventory cards. For usage of suppliers refer to [card](card.md) endpoint.
 
 ### Get ###
 
@@ -48,7 +48,7 @@ Request below shows how to use `ids` to get specific suppliers.
 
 **Response**
 
-Response contains array of supplier objects. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Response contains array of supplier objects. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -140,7 +140,7 @@ Creating and updating can be done simultaneously in one request. Depending on da
 
 **Response**
 
-Response contains array of suppliers that were created or updated. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Response contains array of suppliers that were created or updated. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -202,7 +202,7 @@ Deleting supplier is done via their `ids`. API keeps supplier data in cards sepa
 ```
 **Response**
 
-Successful delete request will return array of supplier objects that were deleted. If there is any problem and response success field is false, then no suppliers were deleted. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki.
+Successful delete request will return array of supplier objects that were deleted. If there is any problem and response success field is false, then no suppliers were deleted. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
