@@ -1,13 +1,13 @@
 **Endpoint: /api/v1/inventory/item**
 
 
-[Get](#markdown-header-get)
+[Get](#GET)
 
-[Create or Update](#markdown-header-update)
+[Create or Update](#UPDATE)
 
-[Delete](#markdown-header-delete)
+[Delete](#DELETE)
 
-Items are basic building block of inventory API. They can either be used to track amounts of products themselves, or be used as components for [recipes - temporary link](https://bitbucket.org/papayapos/papayapos/wiki/GET%20recipe) (something something build complex something something). Along with items, it's important to check [inventory](https://bitbucket.org/papayapos/papayapos/wiki/Inventory) endpoint for more information about tracking amounts of items and [card](https://bitbucket.org/papayapos/papayapos/wiki/Card) endpoint for more information about manipulating amounts.
+Items are basic building block of inventory API. They can either be used to track amounts of products themselves, or be used as components for [recipes - temporary link](recipe.md) (something something build complex something something). Along with items, it's important to check [inventory](inventory.md) endpoint for more information about tracking amounts of items and [card](card.md) endpoint for more information about manipulating amounts.
 
 ### Get ###
 
@@ -95,9 +95,9 @@ Combined request, getting items that match ```itemIds``` **or** ```productCodes`
 
 **Response**
 
-Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki. 
+Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
 
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](https://bitbucket.org/papayapos/papayapos/wiki/Inventory) endpoint.
+> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -161,7 +161,7 @@ Creating and updating items and groups can be done simultaneously in one request
 >
 > All fields both in group and item objects are optional.
 >
-> `Amount` and `priceNetAverage` fields cannot be set by create or update because they are calculated from different source. For more information refer to [card](https://bitbucket.org/papayapos/papayapos/wiki/Card) endpoint. 
+> `Amount` and `priceNetAverage` fields cannot be set by create or update because they are calculated from different source. For more information refer to [card](card.md) endpoint. 
 >
 > When updating existing item all its fields must be set.
 >
@@ -213,9 +213,9 @@ Creating and updating items and groups can be done simultaneously in one request
 
 **Response**
 
-Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki. 
+Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
 
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](https://bitbucket.org/papayapos/papayapos/wiki/Inventory) endpoint.
+> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
@@ -312,11 +312,11 @@ Combined request deletion using both `groupIds` and `itemIds`.
 ```
 **Response**
 
-Successful delete request will return array of groups with items. If there is any problem and response success field is false, then no items were deleted. For the detailed definition of objects refer to the [Object documentation](https://bitbucket.org/papayapos/papayapos/wiki/storehouse%20objects) in wiki. 
+Successful delete request will return array of groups with items. If there is any problem and response success field is false, then no items were deleted. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
 
 > Deleted items are always returned in their `groups` even if group was not deleted. This is for consistency with other responses and informative purposes. To delete group you must provide it's `id` in `groupIds`.
 
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](https://bitbucket.org/papayapos/papayapos/wiki/Inventory) endpoint.
+> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
 
 | field name |    type     | Description                                                  |
 | :--------- | :---------: | :----------------------------------------------------------- |
