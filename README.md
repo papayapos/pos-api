@@ -51,7 +51,7 @@ Errors from storehouse api, all storehouse errors are from range 4000-4999
 | :---        |  :---     |
 | 4000: Default storehouse cannot be deleted | When attempting to delete default storehouse. |
 
-*Error messages*
+**General Error messages**
 
 | error  | Description   |
 | :---        |    ----:   |
