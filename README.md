@@ -15,9 +15,30 @@
 | /api/v1/                                 |                                                 |
 
 
+
+
 **Sending request**
 
-Currently only way to send request is to use Http POST request on correct endpoint with body containing `action` and `data`.
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+***REQUEST DESCRIPTION***
+
+- header must contain access token generated in Papaya POS administration account
+
+```
+Authorization: Bearer <token>
+```
+
+- body contains data in a form of JSON
+
+```
+{}
+```
+
+> Currently only way to send request is to use Http POST request on correct endpoint with body containing `action` and `data`.
 
 **Request**
 
