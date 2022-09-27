@@ -7,6 +7,7 @@
 
 [Delete](#DELETE)
 
+
 Items are basic building block of inventory API. They can either be used to track amounts of products themselves, or be used as components for [recipes - temporary link](recipe.md) (something something build complex something something). Along with items, it's important to check [inventory](inventory.md) endpoint for more information about tracking amounts of items and [card](card.md) endpoint for more information about manipulating amounts.
 
 ### Get ###
