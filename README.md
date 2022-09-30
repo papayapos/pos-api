@@ -3,8 +3,11 @@
 
 
 
-| Endpoint                                 | Description                                     |
-| ---------------------------------------- | ----------------------------------------------- |
+| Endpoint                                   | Description                                     |
+| ----------------------------------------   | ----------------------------------------------- |
+| [/api/v1/areas](areas.md#)                 | CRUD operations for areas (tables)              |
+| [/api/v1/transaction/accountingTransaction](accountingTransaction.md#)       | CRUD operations for inventories |
+| [/api/v1/transaction/accountingEntry](inventory.md#)       | CRUD operations for inventories                 |
 | [/api/v1/inventory](inventory.md#)       | CRUD operations for inventories                 |
 | [/api/v1/inventory/card](card.md#)       | Receive or issue the stock with inventory cards |
 | [/api/v1/inventory/item](item.md#)       | Work with stock items                           |
