@@ -11,8 +11,8 @@ For updating payment status, contents, and distribution.
 | Field Name        | Type                               | Description                                                                        | Required |
 |-------------------|------------------------------------|------------------------------------------------------------------------------------|----------|
 | transactionId     | UUID                               | Unique ID of the Transaction that the payment is going to be created for           | Yes      |
-| accountingEntries | List\<[EntryModel](papayapos/pos-api/storehouse objects.md)>    | The entries that will compose the contents of the payment                          | Yes      |
-| payments          | List\<[TransactionPaymentModel](papayapos/pos-api/storehouse objects.md)> | The series of payments which as a whole will cover the bill created by the entries | Yes      |
+| accountingEntries | List\<[EntryModel](transaction_objects.md#)>    | The entries that will compose the contents of the payment                          | Yes      |
+| payments          | List\<[TransactionPaymentModel](transaction_objects.md#)> | The series of payments which as a whole will cover the bill created by the entries | Yes      |
 | invoiceId         | String                             | The id printed on the invoice                                                      | No       |
 
 **Example**
@@ -31,7 +31,6 @@ Card payment with the API
         "txAdjustCoef": 1,
         "title": "Croissant plnený šunkou a syrom",
         "accountingTransactionId": "dcfb7004-9649-4d92-bab1-261062993381",
-        "vatRateId": 1,
         "seat": 1,
         "unit": "ks",
         "priceCurrency": "EUR",
@@ -95,8 +94,8 @@ Cash payment with API
 
 | Field Name     | Type                                                                      | Description                                                                     |
 |----------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| newTransaction | List\<[TransactionModel](papayapos/pos-api/storehouse objects.md)>        | A list of transaction data provided proportionally to the received entry models |
-| payments       | List\<[TransactionPaymentModel](papayapos/pos-api/storehouse objects.md)> | A list of payment data provided proportionally to the received payment models   |
+| newTransaction | List\<[TransactionModel](transaction_objects.md#)>        | A list of transaction data provided proportionally to the received entry models |
+| payments       | List\<[TransactionPaymentModel](transaction_objects.md#)> | A list of payment data provided proportionally to the received payment models   |
 
 **Example**
 Cash response
