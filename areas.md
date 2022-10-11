@@ -39,7 +39,8 @@ For getting all areas, you can send empty data.
 
 **Response Example**
 
-```{json}
+```json
+{
     "data": {
         "areas": [
             {
