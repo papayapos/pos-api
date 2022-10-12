@@ -41,10 +41,10 @@ Accounting Transaction Query
 ```
 **Response**
 
-| Field Name                    | Type             | Description                                        |
-|-------------------------------|------------------|----------------------------------------------------|
-| adjustedAccountingEntry       | EntryModel       | An entry model with the price changes applied      |
-| adjustedAccountingTransaction | TransactionModel | A transaction model with the price changes applied |
+| Field Name                    | Type                                        | Description                                        |
+|-------------------------------|---------------------------------------------|----------------------------------------------------|
+| adjustedAccountingEntry       | [EntryModel](transaction_objects.md#)       | An entry model with the price changes applied      |
+| adjustedAccountingTransaction | [TransactionModel](transaction_objects.md#) | A transaction model with the price changes applied |
 
 
 **Example**
