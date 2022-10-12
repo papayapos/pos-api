@@ -62,6 +62,7 @@ list of opened accounting transactions that belongs to the area
                 "createdByUserId": 1,
                 "id": "78c06986-3a94-4993-8b3b-09bbb73265da",
                 "priceGross": 12.2,
+                "humanId":"100",
                 "transactionPriceAdjustmentCoefficient": 1
             },
             {
@@ -74,6 +75,7 @@ list of opened accounting transactions that belongs to the area
                 "createdByUserId": 1,
                 "id": "b93045af-3fd5-4bc5-92a4-91f346e1cc5e",
                 "priceGross": 1.3,
+                "humanId":"101",
                 "transactionPriceAdjustmentCoefficient": 1
             },
             {
@@ -86,6 +88,7 @@ list of opened accounting transactions that belongs to the area
                 "createdByUserId": 1,
                 "id": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
                 "priceGross": 14.8,
+                "humanId":"102",
                 "transactionPriceAdjustmentCoefficient": 1
             }
         ]
