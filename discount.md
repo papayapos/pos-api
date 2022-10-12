@@ -14,9 +14,7 @@ For updating the discount ratios.
 
 **Example**
 
----Warning---
-
-Do not fill both accountingTransaction and accountingEntry ids at once, as the response will only contain the entry.
+>Do not fill both accountingTransaction and accountingEntry ids at once, as the response will only contain the entry.
 
 Accounting Entry Query
 ```json
