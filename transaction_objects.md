@@ -85,7 +85,7 @@
 |---------------------------------------|-----------------------------------|--------------------------------------------------------------------|
 | id                                    | UUID                              | Unique accounting transaction Id                                   |
 | area                                  | AreaModel                         | The model to describe the area (table) assigned to the transaction |
-| type                                  | AccountingTransactionTypeApiEnum  | The type of transaction (?)                                        |
+| type                                  | AccountingTransactionTypeApiEnum  | The type of transaction (RECEIPT,INVOICE)                          |
 | createTime                            | Date                              | The date the transaction was created                               |
 | closeTime                             | Date                              | The date the transaction was closed                                |
 | priceGross                            | BigDecimal                        | Price with vat                                                     |
@@ -93,3 +93,16 @@
 | priceVat                              | BigDecimal                        | The vat itself (priceGross - priceNet)                             |
 | accountingTransactionState            | AccountingTransactionStateApiEnum | The current state of the transaction                               |                                                          |
 | transactionPriceAdjustmentCoefficient | BigDecimal                        | The coefficient that the transaction was discounted by             |
+
+**AccountingTransactionStateApiEnum**
+
+| Transaction states  |     
+|---------------------|
+| OPENED              |     
+| LOCKED              |     
+| NOT_PRINTED         |     
+| CANCELED            |     
+| CLOSED              |     
+| EXPORTED            |     
+| CLOSED_EDI          |     
+
