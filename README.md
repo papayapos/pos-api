@@ -3,20 +3,21 @@
 
 
 
-| Endpoint                                                            | Description                                     |
-|---------------------------------------------------------------------|-------------------------------------------------|
-| [/api/v1/areas](areas.md#)                                          | CRUD operations for areas (tables)              |
+| Endpoint                                                               | Description                                     |
+|------------------------------------------------------------------------|-------------------------------------------------|
+| [/api/v1/areas](areas.md#)                                             | CRUD operations for areas (tables)              |
 | [/api/v1/transaction/accountingTransaction](accountingTransaction.md#) | CRUD operations for accounting transaction      |
-| [/api/v1/transaction/accountingEntry](inventory.md#)                | CRUD operations for accounting entry            |
-| [/api/v1/inventory](inventory.md#)                                  | CRUD operations for inventories                 |
-| [/api/v1/inventory/card](card.md#)                                  | Receive or issue the stock with inventory cards |
-| [/api/v1/inventory/item](item.md#)                                  | Work with stock items                           |
-| /api/v1/inventory/recipe                                            | Create and assign recipes to menu items         |
-| /api/v1/inventory/movement (todo define)                            | Read inventory movements not grouped in cards   |
-| [/api/v1/supplier](supplier.md#)                                    | CRUD for supplier                               |
-| /api/v1/order                                                       | Create order to POS                             |
-| /api/v1/                                                            |                                                 |
-| [/api/v1/transaction/payment](payment.md#)                          | Pay for a transaction                           |
+| [/api/v1/transaction/accountingEntry](inventory.md#)                   | CRUD operations for accounting entry            |
+| [/api/v1/inventory](inventory.md#)                                     | CRUD operations for inventories                 |
+| [/api/v1/inventory/card](card.md#)                                     | Receive or issue the stock with inventory cards |
+| [/api/v1/inventory/item](item.md#)                                     | Work with stock items                           |
+| /api/v1/inventory/recipe                                               | Create and assign recipes to menu items         |
+| /api/v1/inventory/movement (todo define)                               | Read inventory movements not grouped in cards   |
+| [/api/v1/supplier](supplier.md#)                                       | CRUD for supplier                               |
+| /api/v1/order                                                          | Create order to POS                             |
+| /api/v1/                                                               |                                                 |
+| [/api/v1/transaction/payment](payment.md#)                             | Pay for a transaction                           |
+| [/api/v1/transaction/discount](discount.md#)                           | Discount a transaction                          |
 
 
 

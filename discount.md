@@ -17,6 +17,8 @@ For updating the discount ratios.
 ---Warning---
 
 Do not fill both accountingTransaction and accountingEntry ids at once, as the response will only contain the entry.
+
+Accounting Entry Query
 ```json
 {
   "action":"UPDATE",
@@ -24,6 +26,17 @@ Do not fill both accountingTransaction and accountingEntry ids at once, as the r
     "accountingEntryId": "6b2b82c2-3423-4905-966a-d66811e0b88a",
     "discountRate": 0.8
   }
+}
+```
+
+Accounting Transaction Query
+```json
+{
+  "data": {
+    "discountRate": 0.8,
+    "accountingTransactionId": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d"
+  },
+  "action": "UPDATE"
 }
 ```
 **Response**
@@ -58,6 +71,28 @@ Accounting Entry Response
       "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
       "createTime": "11.10.2022 14:50:17",
       "seat": 1
+    }
+  }
+}
+```
+
+Accounting Transaction Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "adjustedAccountingTransaction": {
+      "id": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d",
+      "area": {
+        "id": 3,
+        "numberOfSeats": 0
+      },
+      "type": "INVOICE",
+      "createTime": "12.10.2022 11:03:30",
+      "priceGross": 0,
+      "accountingTransactionState": "OPENED",
+      "transactionPriceAdjustmentCoefficient": 0.2
     }
   }
 }
