@@ -64,7 +64,7 @@ Accounting Entry Response
       "accountingEntryState": "CREATED",
       "accountingEntryType": "SALE",
       "priceAmount": 2.50,
-      "priceAdjustCoef": 0.2,
+      "priceAdjustCoef": 0.8,
       "txAdjustCoef": 1,
       "priceCurrency": "EUR",
       "title": "Croissant plnený šunkou a syrom",
@@ -92,7 +92,7 @@ Accounting Transaction Response
       "createTime": "12.10.2022 11:03:30",
       "priceGross": 0,
       "accountingTransactionState": "OPENED",
-      "transactionPriceAdjustmentCoefficient": 0.2
+      "transactionPriceAdjustmentCoefficient": 0.8
     }
   }
 }
