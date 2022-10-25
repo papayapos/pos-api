@@ -15,8 +15,6 @@ For getting current state of inventories we have multiple options, from getting 
 * Sending empty `data` field will make API return all inventories with all items.
 * Sending array of query objects.
     * Allows you to specify which inventories you want to get by their `id`.
-    * Allows you to specify which items you want to get by their `id`.
-    * In case you do not specify items, all items will be get for that inventory.
 
 > In case you send non-existent item or inventory ids, they will be ignored and only existing ones will be fetched.
 
@@ -24,18 +22,16 @@ For getting current state of inventories we have multiple options, from getting 
 
 | field name  | type        | Description   |
 | :---        |    :----:   | :---          |
-| inventories  | array of inventory query objects | Each object contains inventory id and may contain item ids. |
+| inventories  | array of inventory query objects | Each object contains inventory id and its title |
 
 **Inventory query**
 
 | field name  | type        | Description   |
 | :---        |    :----:   | :---          |
 | inventoryId  | number | id of inventory to fetch |
-| itemIds| array of numbers | Long, ids of items to fetch for inventory | 
 
 > `inventoryId` required
 > 
-> `itemIds` are optional and can be used to limit what should be fetched from API. In case you only want specific items, this field can be used to reduce calculation time as well as payload of response.
 
 **Request Examples**
 
@@ -60,41 +56,6 @@ For specific inventory with all items in it, you can send inventory query with j
         "inventoryId": 1
       }
     ]     
-  }
-}
-```
-
-For cases when we want specific inventory but do not require all items we can specify which items we want to get as seen below, which requests state of items with `id` 1,2 and 3 in inventory with `id` 2. You can of course send multiple queries in single request. For simplicity of example there is only one query in example.
-
-```json
-{
-  "action": "GET",
-  "data": {
-    "inventories": [
-       {
-           "inventoryId": 2,
-           "itemIds": [1,2,3]
-       }
-    ]
-  }
-}
-```
-
-Of course it is also possible to combine both types of queries. In example below, first query requests all items for inventory with `id` 1, and items with `id` 1, 2 and 3 for inventory with `id` 2.
-
-```json
-{
-  "action": "GET",
-  "data": {
-    "inventories": [
-       {
-           "inventoryId": 1
-       },
-       {
-          "inventoryId": 2,
-          "itemIds": [1,2,3]
-       }
-    ]
   }
 }
 ```
@@ -129,23 +90,7 @@ Response contains inventory objects with current state of items in it, items are
                 "groups": [
                     {
                         "id": 1,
-                        "name": "Fruit",
-                        "items": [
-                            {
-                                "id": 1,
-                                "externalId": "1234567879",
-                                "title": "Apple",
-                                "productCode": "12345",
-                                "amount": 10,
-                                "minimalStockAmount": 3,
-                                "measuringUnit": "kg",
-                                "secondaryMeasuringUnit": "g",
-                                "unitCoefficient": 1000,
-                                "priceFixed": 5,
-                                "priceNetAverage": 5,
-                                "vatRate": 20
-                            }
-                        ]
+                        "name": "Fruit"
                     }
 
                 ]
