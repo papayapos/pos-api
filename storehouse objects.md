@@ -88,7 +88,7 @@
 | stockChangeCardId | number | long, id of stock change card this item belongs to |
 | entryId | string | id of accounting entry, UUID |
 
-**Storehouse**
+**Inventory**
 
 | field name  | type        | Description   |
 | :---        |    :----:   | :---          |
