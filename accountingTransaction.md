@@ -1,4 +1,4 @@
-**Endpoint: /api/v1/transaction/AccountingTransaction**
+**Endpoint: /api/v1/transaction/accountingTransaction**
 
 [Get](#GET)
 
