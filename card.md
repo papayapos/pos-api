@@ -128,7 +128,6 @@ Contents of data for this response:
                 "items": [
                     {
                         "id": 1,
-                        "stockChangeCardId": 1,
                         "stockItemId": 1,
                         "stockItemTitle": "Apple",
                         "measuringUnit": "piece",
@@ -284,7 +283,6 @@ Contents of data for this response:
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockChangeCardId": 3,
             "stockItemId": 1,
             "stockItemTitle": "Apple",
             "vatRate": 20
@@ -377,7 +375,6 @@ Contents of data for this response:
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockChangeCardId": 3,
             "stockItemId": 1,
             "stockItemTitle": "Apple",
             "vatRate": 20
