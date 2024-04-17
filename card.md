@@ -209,14 +209,13 @@ API always deletes or overwrites previous card items. Because of this it is viab
           "registrationNumber": "55"
         },
         "orderNumber": "12",
-        "deliveryNote": "delivery note",
+        "deliveryNote": "delivery number (number of delivery confirmation document)",
         "note": "Note",
         "items": [
           {
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockChangeCardId": 3,
             "stockItemId": 1,
             "stockItemTitle": "Apple",
             "vatRate": 20
