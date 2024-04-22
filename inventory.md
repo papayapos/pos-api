@@ -12,7 +12,8 @@ Inventories allow users to track amounts of [items](item.md). Furthermore, users
 
 For getting current state of inventories we have multiple options, from getting everything as well as allowing you to select specific inventories and items.
 
-* Sending empty `data` field will make API return all inventories with all items.
+* Sending empty `data` field will make API return all inventories.
+* Items will be returned only if `withAmounts` is `true` and some inventory is queried.
 * Sending array of query objects.
     * Allows you to specify which inventories you want to get by their `id`.
 
@@ -23,19 +24,21 @@ For getting current state of inventories we have multiple options, from getting 
 | field name  | type        | Description   |
 | :---        |    :----:   | :---          |
 | inventories  | array of inventory query objects | Each object contains inventory id and its title |
+| withAmounts  | boolean | If items with amounts should be included in response |
 
 **Inventory query**
 
 | field name  | type        | Description   |
 | :---        |    :----:   | :---          |
 | inventoryId  | number | id of inventory to fetch |
+| itemIds  | array of UUID strings | filter returned items by their ID |
 
 > `inventoryId` required
 > 
 
 **Request Examples**
 
-For getting all inventories with their items, you can send empty data.
+For getting all inventories, you can send empty data.
 
 ```json
 {
@@ -45,7 +48,7 @@ For getting all inventories with their items, you can send empty data.
 }
 ```
 
-For specific inventory with all items in it, you can send inventory query with just `inventoryId`. You can of course send multiple queries in single request. For simplicity of example there is only one query in example.
+For specific inventory with all items in it, you can send inventory query with just `inventoryId` and `withAmounts`. You can send multiple inventory queries in single request. For simplicity of example there is only one query in the example.
 
 ```json
 {
@@ -55,7 +58,25 @@ For specific inventory with all items in it, you can send inventory query with j
       {
         "inventoryId": 1
       }
-    ]     
+    ],
+    "withAmounts": true
+  }
+}
+```
+
+To filter items from an inventory, add `itemIds`. This filtering is specific for each inventory query
+
+```json
+{
+  "action": "GET",
+  "data": {
+    "inventories": [
+      {
+        "inventoryId": 1,
+        "itemIds": ["08850701-060c-4381-9805-185f8f846138", "a0aa6b7d-9513-416b-938b-3e4bfb5a47d5"]
+      }
+    ],
+    "withAmounts": true
   }
 }
 ```
