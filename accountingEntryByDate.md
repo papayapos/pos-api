@@ -37,7 +37,7 @@ Request gets all items from a date range
 | txUuid | String (UUID) | id of the transaction |
 | createDate | Long | unix timestamp (in milliseconds) of entry creation |
 | id | String (UUID) | id of the entry |
-| title" | String | title of the entry |
+| title | String | title of the entry |
 | plu | String | PLU code of the entry |
 | menuTitle | String | title of the menu of the entry |
 | count | BigDecimal | count of the entry |
