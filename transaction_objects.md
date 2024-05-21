@@ -54,6 +54,7 @@
 | BANK_TRANSFER    |
 | CALLIO_CARD      |
 | VOUCHER          |
+| QERKO            |
 
  ## Entry Model ## 
 
