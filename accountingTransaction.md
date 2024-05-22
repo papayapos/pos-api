@@ -43,6 +43,8 @@ list of opened accounting transactions that belongs to the area
 | createdByUser                         |    int     | Id of user that created the bill                             |
 | priceGross                            | BigDecimal | gross price of the bill                                      |
 | transactionPriceAdjustmentCoefficient | BigDecimal | adjusts price for every item on the bill (range 0-1 is discount, higher is surcharge) |
+| customerUuid                          |    UUID    | internal UUID of member card                                 |
+| memberCardId                          |   String   | physical card ID (scanned by android app)                    |
 
 
 
@@ -63,7 +65,9 @@ list of opened accounting transactions that belongs to the area
                 "id": "78c06986-3a94-4993-8b3b-09bbb73265da",
                 "priceGross": 12.2,
                 "humanId":"100",
-                "transactionPriceAdjustmentCoefficient": 1
+                "transactionPriceAdjustmentCoefficient": 1,
+                "customerUuid": "29cd0081-9e47-4cbf-b124-354f2d01fbec",
+                "memberCardId": "123456"
             },
             {
                 "accountingTransactionState": "OPENED",
@@ -76,7 +80,9 @@ list of opened accounting transactions that belongs to the area
                 "id": "b93045af-3fd5-4bc5-92a4-91f346e1cc5e",
                 "priceGross": 1.3,
                 "humanId":"101",
-                "transactionPriceAdjustmentCoefficient": 1
+                "transactionPriceAdjustmentCoefficient": 1,
+                "customerUuid": "0bee35d7-c993-425d-8de8-716d5fa30c8a",
+                "memberCardId": "341"
             },
             {
                 "accountingTransactionState": "OPENED",
