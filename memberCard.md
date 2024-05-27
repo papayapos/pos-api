@@ -1,6 +1,83 @@
 **Endpoint: /api/v1/memberCard**
 
+[Get](#GET)
+
 [Create or Update](#UPDATE)
+
+### GET ###
+
+Returns a specific member card, or a list of all cards.
+
+* Sending empty returns a list of all member cards (doesn't return deleted cards)
+* Request with `uuid` set returns only that one member card
+
+**Request data**
+
+| field name              |     type      | Description                         |
+| :---------------------- | :-----------: | :---------------------------------- |
+| uuid      | String (UUID)| Optional UUID of member card |
+
+**Request Examples**
+
+Get all member cards
+
+```json
+{
+  "action": "GET",
+  "data": {}
+}
+```
+
+Get one member card
+
+```json
+{
+  "action": "GET",
+  "data": {
+    "uuid": "ac9aef30-9c11-4f53-b59e-f2af98c3e13f"
+  }
+}
+```
+
+**Response**
+
+| field name              |     type      | Description                                                  |
+| :---------------------- | :-----------: | :----------------------------------------------------------- |
+| memberCards | MemberCard[] | List of member cards
+
+ #### Member card ####
+
+| Field Name | Type         | Description                                                        |
+|------------|--------------|--------------------------------------------------------------------|
+| uuid       | String (UUID)| UUID of member card |
+| firstName  | String       | first name of customer |
+| lastName   | String       | last name of customer |
+| email      | String       | email address of customer |
+| cardId     | String       | ID of card (android app reads this via NFC) |
+| discount   | BigDecimal   | discount in % that will be applied for this customer |
+| deleted    | Boolean      | deleted cards are returned only when queried by UUID |
+
+**Response Example**
+
+```json
+{
+  "success": true,
+  "data": {
+    "memberCards": [
+      {
+        "uuid": "29cd0081-9e47-4cbf-b124-354f2d01fbec",
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@email.com"
+        "cardId": "123",
+        "discount": 5
+        "deleted": false
+      }
+    ]
+  }
+}
+```
+
 
 ### UPDATE ###
 
