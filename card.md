@@ -128,7 +128,7 @@ Contents of data for this response:
                 "items": [
                     {
                         "id": 1,
-                        "stockItemId": 1,
+                        "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"
                         "stockItemTitle": "Apple",
                         "measuringUnit": "piece",
                         "amount": 10,
@@ -215,7 +215,7 @@ API always deletes or overwrites previous card items. Because of this it is viab
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", #this ID must be ID of already existing ITEM,
             "stockItemTitle": "Apple",
             "vatRate": 20
           }
@@ -283,7 +283,7 @@ Contents of data for this response:
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
             "stockItemTitle": "Apple",
             "vatRate": 20
           }
@@ -375,7 +375,7 @@ Contents of data for this response:
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
             "stockItemTitle": "Apple",
             "vatRate": 20
           }
