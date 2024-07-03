@@ -15,7 +15,7 @@ Items are basic building block of inventory API. They can either be used to trac
 
 | field name   |       type       | Description                                             |
 | :----------- | :--------------: | :------------------------------------------------------ |
-| itemIds      | array of numbers | Ids of requested stock items. Values are java long type |
+| itemIds      | array of strings | Ids of requested stock items. Values are java UUID type |
 | productCodes | array of strings | Product codes of requested items                        |
 | groupIds     | array of number  | Group ids whose items should be returned                |
 
@@ -83,7 +83,7 @@ Combined request, getting items that match ```itemIds``` **or** ```productCodes`
 {
   "action": "GET",
   "data": {
-    "itemIds": [1, 2, 3, 4],
+    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
     "productCodes": ["123", "5555"],
     "groupIds": [1, 2]
   }
@@ -123,7 +123,7 @@ Contents of data for this response:
                 "name": "Fruit",
                 "items": [
                     {
-                        "id": 1,
+                        "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
                         "externalId": "ext 123"
                         "measuringUnit": "kg",
                         "minimalStockAmount": 3,
@@ -191,7 +191,7 @@ Creating and updating items and groups can be done simultaneously in one request
         "type": "OTHER",
         "items": [
           {
-            "id": 1,
+            "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
             "externalId": "ext 123"
             "title": "Apple",
             "priceFixed": 5,
@@ -238,7 +238,7 @@ Response contains array of group objects with their items. For the detailed defi
                 "name": "Fruit",
                 "items": [
                     {
-                        "id": 1,
+                        "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
                         "externalId": "ext 123"
                         "measuringUnit": "kg",
                         "minimalStockAmount": 3,
@@ -284,7 +284,7 @@ Request for deletion using `itemIds`.
 {
   "action": "DELETE",
   "data": {
-    "itemIds": [1, 2, 3, 4]
+    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
   }
 }
 ```
@@ -305,7 +305,7 @@ Combined request deletion using both `groupIds` and `itemIds`.
 {
   "action": "DELETE",
   "data": {
-    "itemIds": [1, 2, 3, 4],
+    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
     "groupIds": [1, 2]
   }
 }
@@ -342,7 +342,7 @@ Contents of data for this response:
             "name": "Fruid"
             "items": [
                 {
-                    "id": 1,
+                    "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
                     "measuringUnit": "kg",
                     "minimalStockAmount": 3,
                     "priceFixed": 5,
