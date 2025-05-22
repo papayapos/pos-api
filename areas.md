@@ -50,37 +50,37 @@ For getting all areas, you can send empty data.
                 "id": 3,
                 "name": "INT 01",
                 "numberOfSeats": 0,
-                "roomId: 1
+                "roomId": 1
             },
             {
                 "id": 4,
                 "name": "INT 02",
                 "numberOfSeats": 0,
-                "roomId: 1
+                "roomId": 1
             },
             {
                 "id": 5,
                 "name": "INT 03",
                 "numberOfSeats": 0,
-                "roomId: 1
+                "roomId": 1
             },
             {
                 "id": 6,
                 "name": "TER 01",
                 "numberOfSeats": 0,
-                "roomId: 2
+                "roomId": 2
             },
             {
                 "id": 7,
                 "name": "TER 02",
                 "numberOfSeats": 0,
-                "roomId: 2
+                "roomId": 2
             },
             {
                 "id": 8,
                 "name": "TER 03",
                 "numberOfSeats": 0,
-                "roomId: 2
+                "roomId": 2
             }
         ]
     },
@@ -127,7 +127,7 @@ Update existing table. `roomId` is optional - table will remain assigned to its 
   "data": {
     "id": 4
     "name": "rename table",
-    "numberOfSeats: 2
+    "numberOfSeats": 2
   }
 }
 ```
