@@ -131,3 +131,8 @@
 | EXPORTED           |     
 | CLOSED_EDIT        |     
 
+## AccountingTransactionTypeApiEnum ##
+| Transaction type |
+|------------------|
+| RECEIPT          |
+| INVOICE          |
