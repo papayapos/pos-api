@@ -143,3 +143,43 @@ For getting all inventories with their items, you can send empty data.
 }
 ```
 
+[POST](#POST)
+
+### POST
+
+Request post accountable item on bill. 
+
+* Sending accountable item on the bill (accountingTransactionId).
+
+**Request data**
+
+add these parameters to add accountable item on accounting transaction (bill) `id`
+
+| field name              |     type      | Description                         |
+| :---------------------- | :-----------: | :---------------------------------- |
+| accountingTransactionId | STRING (UUID) | id of accounting transaction (bill) |
+| accountableItemId       | STRING (UUID) | id of accountable Item              |
+| count                   | BigDecimal (Number) | count of items on the bill    |
+| price                   | BigDecimal (Number) | id of accounting transaction (bill) |
+| state                   | STRING (ENUM) | use only String CREATED             |
+| type                    | STRING (ENUM) | use only String SALE                |
+
+**Request Example**
+
+Requets for adding accounting entry on the bill (AccountingTransaction).
+
+```json
+{
+  "action":"UPDATE",
+  "data": {
+    "accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea",
+    "accountableItemId" : "a7e92c6d-8db5-4753-8613-de50a6b71ttt",
+    "count" : 2,
+    "price" : 2.50,
+    "state" : "CREATED",
+    "type" : "SALE"
+  }
+}
+```
+
+
