@@ -70,7 +70,7 @@ Get one member card
         "lastName": "Doe",
         "email": "john.doe@email.com"
         "cardId": "123",
-        "discount": 5
+        "discount": 5,
         "deleted": false
       }
     ]
