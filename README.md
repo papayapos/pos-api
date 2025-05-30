@@ -6,6 +6,8 @@
 | Endpoint                                                               | Description                                     |
 |------------------------------------------------------------------------|-------------------------------------------------|
 | [/api/v1/areas](areas.md#)                                             | CRUD operations for areas (tables)              |
+| [/api/v1/areas/rooms](rooms.md#)                                       | CRUD operations for rooms (room, sector etc.)   |
+| [/api/v1/salePlace](salePlace.md#)                                     | CRUD operations for getting sale place(cashier) |
 | [/api/v1/transaction/accountingTransaction](accountingTransaction.md#) | CRUD operations for accounting transaction      |
 | [/api/v1/transaction/accountingEntry](inventory.md#)                   | CRUD operations for accounting entry            |
 | [/api/v1/inventory](inventory.md#)                                     | CRUD operations for inventories                 |
