@@ -1,4 +1,4 @@
-**Endpoint: /api/v1/catalogItem**
+**Endpoint: /api/v1/catalog/item**
 
 [Get](#GET)
 
