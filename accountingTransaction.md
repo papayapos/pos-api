@@ -121,6 +121,7 @@ Open new transaction
 | areaId            | Long                   | ID of table                                                      | No       |
 | salePlaceId       | UUID                   | ID of sale place (picks first sale place if not present)         | No       |
 | memberCardId      | String                 | ID of customer card                                              | No       |
+| footer            | String                 | Custom text that will be printed on a receipt                    | No       |
 
 **Examples**
 
@@ -144,7 +145,8 @@ Create an invoice at a given sale place with customers card
         "invoiceNumber": "INV44331",
         "memberCardId": "12345",
         "name": "invoice",
-        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
+        “footer” : “Custom text"
     }
 }
 ```
