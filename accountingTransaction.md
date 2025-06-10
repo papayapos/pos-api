@@ -146,7 +146,7 @@ Create an invoice at a given sale place with customers card
         "memberCardId": "12345",
         "name": "invoice",
         "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
-        “footer” : “Custom text"
+        "footer" : "Custom text"
     }
 }
 ```
