@@ -9,7 +9,6 @@
 | [/api/v1/areas/rooms](rooms.md#)                                       | CRUD operations for rooms (room, sector etc.)   |
 | [/api/v1/salePlace](salePlace.md#)                                     | READ operations for sale place(cashier)         |
 | [/api/v1/catalog/item](catalogItem.md#)                                | CRUD operations for catalog items               |
-| [/api/v1/transaction/accountingEntry](accountingEntry.md#)             | CRUD operations for accounting entry            |
 | [/api/v1/inventory](inventory.md#)                                     | CRUD operations for inventories                 |
 | [/api/v1/inventory/card](card.md#)                                     | Receive or issue the stock with inventory cards |
 | [/api/v1/inventory/item](item.md#)                                     | Work with stock items                           |
@@ -17,8 +16,8 @@
 | /api/v1/inventory/movement (todo define)                               | Read inventory movements not grouped in cards   |
 | [/api/v1/supplier](supplier.md#)                                       | CRUD for supplier                               |
 | [/api/v1/memberCard](memberCard.md#)                                   | CRUD operations on Member/Loyalty Cards         |
-| /api/v1/                                                               |                                                 |
 | [/api/v1/transaction/accountingTransaction](accountingTransaction.md#) | CRUD for order and bill (Create/Close)          |
+| [/api/v1/transaction/accountingEntry](accountingEntry.md#)             | CRUD operations for accounting entry            |
 | [/api/v1/transaction/payment](payment.md#)                             | Pay for a transaction                           |
 | [/api/v1/transaction/discount](discount.md#)                           | Discount a transaction                          |
 
