@@ -1,5 +1,8 @@
 **Endpoint: /api/v1/status**
 
+Responses to API requests that need to be reflected on android devices (for exaplme operations with accounting transactions) contain 
+`operationId` field (UUID). This can be used to check, if they have been processed completely.
+
 ### GET
 
 Checks if an operation is properly replicated into android devices.
