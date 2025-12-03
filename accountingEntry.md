@@ -1,7 +1,9 @@
 **Endpoint: /api/v1/transaction/accountingEntry**
 
 [GET](#GET)
+
 [UPDATE](#UPDATE)
+
 [DELETE](#DELETE)
 
 ### GET
