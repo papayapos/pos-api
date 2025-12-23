@@ -4,6 +4,8 @@
 
 [UPDATE](#UPDATE)
 
+[DELETE](#DELETE)
+
 ### GET ###
 
 Get open bills for a table:
@@ -155,3 +157,28 @@ Create an invoice at a given sale place with customers card
 
 Details of opened transaction using the same format as GET
 
+### DELETE ###
+
+Cancel a transaction (also cancels all entries in the transaction)
+
+**Request data**
+
+
+| field name | type | Description                       |
+| :--------- | :--: | :-------------------------------- |
+| id         | UUID | id of transaction to be cancelled |
+
+**Request Example**
+
+```json
+{
+  "action": "DELETE",
+  "data": {
+    "id" : "d703ca6d-c57d-408a-a449-36bdfd44a0eb"
+  }
+}
+```
+
+**Response**
+
+Details of canceled transaction in the same format as GET/UPDATE

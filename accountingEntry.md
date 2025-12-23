@@ -1,8 +1,12 @@
 **Endpoint: /api/v1/transaction/accountingEntry**
 
-[Get](#GET)
+[GET](#GET)
 
-### Get
+[UPDATE](#UPDATE)
+
+[DELETE](#DELETE)
+
+### GET
 
 Request gets all bill items
 
@@ -143,9 +147,7 @@ For getting all inventories with their items, you can send empty data.
 }
 ```
 
-[POST](#POST)
-
-### POST
+### UPDATE
 
 Request post accountable item on bill. 
 
@@ -182,4 +184,27 @@ Requets for adding accounting entry on the bill (AccountingTransaction).
 }
 ```
 
+### DELETE
 
+Cancel an accounting entry
+
+**Request data**
+
+| field name | type | Description                 |
+| :--------- | :--: | :-------------------------- |
+| id         | UUID | id of entry to be cancelled |
+
+**Request Example**
+
+```json
+{
+  "action": "DELETE",
+  "data": {
+    "id" : "868d73c9-3b06-4642-a861-1b0d28d0de9d"
+  }
+}
+```
+
+**Response**
+
+Details of canceled entry in the same format as GET
