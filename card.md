@@ -80,6 +80,34 @@ By date range with filters:
 
 `data.cards` — array of stock change card objects. See [storehouse objects](storehouse%20objects.md) for full field definitions.
 
+### Code examples
+
+HTTPie — get by IDs:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"ids":[1,2,3]}'
+```
+
+HTTPie — get by date range:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"from":"01.01.2024 00:00:00","to":"31.01.2024 23:59:59"}'
+```
+
+Kotlin:
+```kotlin
+// Get by IDs
+println(papayaPost("/api/v1/inventory/card", "GET", """{"ids":[1,2,3]}"""))
+
+// Get by date range
+println(papayaPost("/api/v1/inventory/card", "GET",
+    """{"from":"01.01.2024 00:00:00","to":"31.01.2024 23:59:59"}"""))
+```
+
 ### Response example
 
 ```json
@@ -235,6 +263,34 @@ Create or update stock change cards.
 }
 ```
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"cards":[{"inventoryId":1,"createTime":"17.02.2022 14:04:03","placedTime":"17.02.2022 14:04:03","type":"RECEIPT_CARD","items":[{"stockItemId":"27fd9916-d6ee-43d7-a3a4-0946f41b3c0f","amount":100,"measuringUnit":"ks","priceNet":0.5,"vatRate":20}]}]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/inventory/card", "UPDATE", """
+    {"cards":[{
+        "inventoryId":1,
+        "createTime":"17.02.2022 14:04:03",
+        "placedTime":"17.02.2022 14:04:03",
+        "type":"RECEIPT_CARD",
+        "items":[{
+            "stockItemId":"27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "amount":100,
+            "measuringUnit":"ks",
+            "priceNet":0.5,
+            "vatRate":20
+        }]
+    }]}""".trimIndent()))
+```
+
 ### Response
 
 Returns the created or updated cards with their items in `data.cards`. Capture item IDs from this response if you need them for future updates.
@@ -310,6 +366,21 @@ Delete stock change cards by their IDs. Card items are deleted along with their 
     "ids": [1, 2, 3]
   }
 }
+```
+
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"ids":[1,2,3]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/inventory/card", "DELETE", """{"ids":[1,2,3]}"""))
 ```
 
 ### Response

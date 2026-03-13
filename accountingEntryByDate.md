@@ -57,6 +57,22 @@ Fetch all accounting entries created between two timestamps.
 | `revenueCenterName` | string | Name of the revenue center |
 | `note` | string | Entry note |
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingEntry/date \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"fromDate":1713873874129,"toDate":1713873934000}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingEntry/date", "GET",
+    """{"fromDate":1713873874129,"toDate":1713873934000}"""))
+```
+
 ### Response example
 
 ```json

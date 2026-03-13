@@ -48,6 +48,22 @@ Fetch open transactions for a given area (table).
 | `memberCardId` | string | Physical card ID (if any) |
 | `salePlaceId` | string (UUID) | UUID of the sale place |
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingTransaction \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"areaId":2}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingTransaction", "GET",
+    """{"areaId":2}"""))
+```
+
 ### Response example
 
 ```json
@@ -124,6 +140,35 @@ Invoice at a specific sale place with a customer card:
 }
 ```
 
+### Code examples
+
+HTTPie — quick receipt at a table:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingTransaction \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"accountingTransactionType":"RECEIPT","areaId":9}'
+```
+
+HTTPie — invoice with customer card:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingTransaction \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"accountingTransactionType":"INVOICE","invoiceNumber":"INV44331","memberCardId":"12345","salePlaceId":"a25805ba-dd76-4c08-8188-5e64bc2e1645"}'
+```
+
+Kotlin:
+```kotlin
+// Quick receipt at a table
+println(papayaPost("/api/v1/transaction/accountingTransaction", "UPDATE",
+    """{"accountingTransactionType":"RECEIPT","areaId":9}"""))
+
+// Invoice with customer card
+println(papayaPost("/api/v1/transaction/accountingTransaction", "UPDATE",
+    """{"accountingTransactionType":"INVOICE","invoiceNumber":"INV44331","memberCardId":"12345","salePlaceId":"a25805ba-dd76-4c08-8188-5e64bc2e1645"}"""))
+```
+
 ### Response
 
 Returns the created transaction in `data.accountingTransactions` using the same format as GET.
@@ -175,6 +220,22 @@ Cancel a transaction. Cancelling a transaction also cancels all entries on it.
     "id": "d703ca6d-c57d-408a-a449-36bdfd44a0eb"
   }
 }
+```
+
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingTransaction \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"id":"d703ca6d-c57d-408a-a449-36bdfd44a0eb"}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingTransaction", "DELETE",
+    """{"id":"d703ca6d-c57d-408a-a449-36bdfd44a0eb"}"""))
 ```
 
 ### Response

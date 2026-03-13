@@ -123,6 +123,34 @@ Combined filter (union of all matches):
 }
 ```
 
+### Code examples
+
+HTTPie — get all items:
+```bash
+http POST $BASE_URL/api/v1/inventory/item \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — filter by product codes:
+```bash
+http POST $BASE_URL/api/v1/inventory/item \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"productCodes":["123","5555"]}'
+```
+
+Kotlin:
+```kotlin
+// Get all items
+println(papayaPost("/api/v1/inventory/item", "GET"))
+
+// Filter by product codes
+println(papayaPost("/api/v1/inventory/item", "GET",
+    """{"productCodes":["123","5555"]}"""))
+```
+
 ---
 
 ## UPDATE
@@ -242,6 +270,24 @@ Returns the created or updated groups with their items in `data.groups`.
 }
 ```
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory/item \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"groups":[{"id":1,"name":"Fruit","type":"OTHER","items":[{"title":"Apple","priceFixed":5,"vatRate":20,"measuringUnit":"kg"}]}]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/inventory/item", "UPDATE", """
+    {"groups":[{"id":1,"name":"Fruit","type":"OTHER","items":[
+        {"title":"Apple","priceFixed":5,"vatRate":20,"measuringUnit":"kg"}
+    ]}]}""".trimIndent()))
+```
+
 ---
 
 ## DELETE
@@ -307,6 +353,34 @@ Returns deleted groups with their items in `data.groups`. Deleted items are alwa
 If `success` is `false`, no items were deleted.
 
 > `amount` is not included. Use [/api/v1/inventory](inventory.md) for stock amounts.
+
+### Code examples
+
+HTTPie — delete items:
+```bash
+http POST $BASE_URL/api/v1/inventory/item \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"itemIds":["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"]}'
+```
+
+HTTPie — delete group:
+```bash
+http POST $BASE_URL/api/v1/inventory/item \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"groupIds":[1]}'
+```
+
+Kotlin:
+```kotlin
+// Delete items
+println(papayaPost("/api/v1/inventory/item", "DELETE",
+    """{"itemIds":["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"]}"""))
+
+// Delete group
+println(papayaPost("/api/v1/inventory/item", "DELETE", """{"groupIds":[1]}"""))
+```
 
 ### Response example
 

@@ -53,6 +53,35 @@ Discount an entire transaction by 20%:
 - `data.adjustedAccountingEntry` — returned when an entry was discounted. See [EntryModel](transaction_objects.md).
 - `data.adjustedAccountingTransaction` — returned when a transaction was discounted. See [TransactionModel](transaction_objects.md).
 
+### Code examples
+
+HTTPie — discount an entry:
+```bash
+http POST $BASE_URL/api/v1/transaction/discount \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"accountingEntryId":"6b2b82c2-3423-4905-966a-d66811e0b88a","discountRate":0.8}'
+```
+
+HTTPie — discount a transaction:
+```bash
+http POST $BASE_URL/api/v1/transaction/discount \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"accountingTransactionId":"d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d","discountRate":0.8}'
+```
+
+Kotlin:
+```kotlin
+// Discount a single entry by 20%
+println(papayaPost("/api/v1/transaction/discount", "UPDATE",
+    """{"accountingEntryId":"6b2b82c2-3423-4905-966a-d66811e0b88a","discountRate":0.8}"""))
+
+// Discount entire transaction by 20%
+println(papayaPost("/api/v1/transaction/discount", "UPDATE",
+    """{"accountingTransactionId":"d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d","discountRate":0.8}"""))
+```
+
 ### Response examples
 
 Entry discount response:

@@ -57,6 +57,34 @@ Single member card (including if deleted):
 | `discount` | number | Discount percentage applied to this customer's orders |
 | `deleted` | boolean | `true` if the card has been soft-deleted. Returned only when queried by UUID. |
 
+### Code examples
+
+HTTPie — get all cards:
+```bash
+http POST $BASE_URL/api/v1/memberCard \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get single card:
+```bash
+http POST $BASE_URL/api/v1/memberCard \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f"}'
+```
+
+Kotlin:
+```kotlin
+// Get all active member cards
+println(papayaPost("/api/v1/memberCard", "GET"))
+
+// Get single card by UUID
+println(papayaPost("/api/v1/memberCard", "GET",
+    """{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f"}"""))
+```
+
 ### Response example
 
 ```json
@@ -129,6 +157,35 @@ Soft-delete an existing card:
     "deleted": true
   }
 }
+```
+
+### Code examples
+
+HTTPie — create card:
+```bash
+http POST $BASE_URL/api/v1/memberCard \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"firstName":"John","lastName":"Doe","cardId":"123","discount":5}'
+```
+
+HTTPie — soft-delete card:
+```bash
+http POST $BASE_URL/api/v1/memberCard \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f","deleted":true}'
+```
+
+Kotlin:
+```kotlin
+// Create new member card
+println(papayaPost("/api/v1/memberCard", "UPDATE",
+    """{"firstName":"John","lastName":"Doe","cardId":"123","discount":5}"""))
+
+// Soft-delete card
+println(papayaPost("/api/v1/memberCard", "UPDATE",
+    """{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f","deleted":true}"""))
 ```
 
 ### Response

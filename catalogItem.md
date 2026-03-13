@@ -93,6 +93,34 @@ Specific items by UUID:
 | `isOutOfStock` | boolean | Whether the item is marked as out of stock |
 | `position` | number | Display order position within the category |
 
+### Code examples
+
+HTTPie — get all items:
+```bash
+http POST $BASE_URL/api/v1/catalog/item \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get items by category:
+```bash
+http POST $BASE_URL/api/v1/catalog/item \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"categories":["5de57c08-6b12-4de5-8d6f-edccaf82cd2d"]}'
+```
+
+Kotlin:
+```kotlin
+// Get all catalog items
+println(papayaPost("/api/v1/catalog/item", "GET"))
+
+// Get items from specific categories
+println(papayaPost("/api/v1/catalog/item", "GET",
+    """{"categories":["5de57c08-6b12-4de5-8d6f-edccaf82cd2d"]}"""))
+```
+
 ### Response example
 
 ```json

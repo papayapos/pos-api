@@ -69,6 +69,21 @@ Specific rooms by ID:
 }
 ```
 
+### Code examples
+
+HTTPie — get all rooms:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/areas/rooms", "GET"))
+```
+
 ---
 
 ## UPDATE
@@ -128,4 +143,31 @@ Returns the created or updated room object in `data.rooms`.
     ]
   }
 }
+```
+
+### Code examples
+
+HTTPie — create room:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"name":"new room"}'
+```
+
+HTTPie — update room:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"id":2,"name":"renamed room"}'
+```
+
+Kotlin:
+```kotlin
+// Create room
+println(papayaPost("/api/v1/areas/rooms", "UPDATE", """{"name":"new room"}"""))
+
+// Update room
+println(papayaPost("/api/v1/areas/rooms", "UPDATE", """{"id":2,"name":"renamed room"}"""))
 ```

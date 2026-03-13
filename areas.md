@@ -81,6 +81,33 @@ Specific areas by ID:
 }
 ```
 
+### Code examples
+
+HTTPie — get all areas:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get specific areas:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"ids":[3,4,5]}'
+```
+
+Kotlin:
+```kotlin
+// Get all areas
+println(papayaPost("/api/v1/areas", "GET"))
+
+// Get specific areas
+println(papayaPost("/api/v1/areas", "GET", """{"ids":[3,4,5]}"""))
+```
+
 ---
 
 ## UPDATE
@@ -146,4 +173,31 @@ Returns the created or updated area object in `data.areas`.
     ]
   }
 }
+```
+
+### Code examples
+
+HTTPie — create new area:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"name":"new table","roomId":1}'
+```
+
+HTTPie — update existing area:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"id":4,"name":"renamed table","numberOfSeats":2}'
+```
+
+Kotlin:
+```kotlin
+// Create new area
+println(papayaPost("/api/v1/areas", "UPDATE", """{"name":"new table","roomId":1}"""))
+
+// Update existing area
+println(papayaPost("/api/v1/areas", "UPDATE", """{"id":4,"name":"renamed table","numberOfSeats":2}"""))
 ```

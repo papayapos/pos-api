@@ -53,6 +53,22 @@ Fetch all entries on a given transaction.
 | `vatRateValue` | number | VAT rate in % |
 | `createTime` | string | Date/time the entry was created |
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingEntry \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea"}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingEntry", "GET",
+    """{"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea"}"""))
+```
+
 ### Response example
 
 ```json
@@ -117,6 +133,25 @@ Add an item to an open transaction.
 }
 ```
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingEntry \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea","accountableItemId":"b6aeb536-5829-41f1-ab86-aba8f69d614b","count":2,"price":3.50,"state":"CREATED","type":"SALE"}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingEntry", "UPDATE", """
+    {"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea",
+     "accountableItemId":"b6aeb536-5829-41f1-ab86-aba8f69d614b",
+     "count":2,"price":3.50,"state":"CREATED","type":"SALE"}
+""".trimIndent()))
+```
+
 ### Response
 
 Returns the created entry in `data.accountingEntries` using the same format as GET.
@@ -142,6 +177,22 @@ Cancel an accounting entry. The entry is marked as `CANCELED` and is no longer i
     "id": "868d73c9-3b06-4642-a861-1b0d28d0de9d"
   }
 }
+```
+
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingEntry \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"id":"868d73c9-3b06-4642-a861-1b0d28d0de9d"}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/transaction/accountingEntry", "DELETE",
+    """{"id":"868d73c9-3b06-4642-a861-1b0d28d0de9d"}"""))
 ```
 
 ### Response

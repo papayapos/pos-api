@@ -88,6 +88,34 @@ Specific inventory with filtered items:
 |---|---|---|
 | `inventories` | object[] | Inventories matching the request |
 
+### Code examples
+
+HTTPie — get all inventories:
+```bash
+http POST $BASE_URL/api/v1/inventory \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get inventory with amounts:
+```bash
+http POST $BASE_URL/api/v1/inventory \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"inventories":[{"inventoryId":1}],"withAmounts":true}'
+```
+
+Kotlin:
+```kotlin
+// Get all inventories
+println(papayaPost("/api/v1/inventory", "GET"))
+
+// Get inventory with item amounts
+println(papayaPost("/api/v1/inventory", "GET",
+    """{"inventories":[{"inventoryId":1}],"withAmounts":true}"""))
+```
+
 ### Response example
 
 ```json
@@ -184,6 +212,22 @@ Returns the created or updated inventory objects in `data.inventories`.
 }
 ```
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"inventories":[{"id":1,"name":"Main inventory","description":"Primary storehouse"}]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/inventory", "UPDATE",
+    """{"inventories":[{"id":1,"name":"Main inventory","description":"Primary storehouse"}]}"""))
+```
+
 ---
 
 ## DELETE
@@ -234,6 +278,21 @@ Returns the deleted inventory objects in `data.inventories`. The `groups` field 
     ]
   }
 }
+```
+
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"ids":[2,3]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/inventory", "DELETE", """{"ids":[2,3]}"""))
 ```
 
 ### Errors

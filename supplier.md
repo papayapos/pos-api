@@ -47,6 +47,33 @@ Specific suppliers by ID:
 
 `data.suppliers` — array of supplier objects. See [supplier objects](supplier%20objects.md) for field definitions.
 
+### Code examples
+
+HTTPie — get all suppliers:
+```bash
+http POST $BASE_URL/api/v1/supplier \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get by IDs:
+```bash
+http POST $BASE_URL/api/v1/supplier \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"ids":[1,2]}'
+```
+
+Kotlin:
+```kotlin
+// Get all suppliers
+println(papayaPost("/api/v1/supplier", "GET"))
+
+// Get by IDs
+println(papayaPost("/api/v1/supplier", "GET", """{"ids":[1,2]}"""))
+```
+
 ### Response example
 
 ```json
@@ -139,6 +166,22 @@ Create or update suppliers. Both can be done in one request.
 }
 ```
 
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/supplier \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"suppliers":[{"id":1,"name":"Silvia","city":"Bratislava","country":"Slovakia","email":"abc@cde.efg"}]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/supplier", "UPDATE",
+    """{"suppliers":[{"id":1,"name":"Silvia","city":"Bratislava","country":"Slovakia","email":"abc@cde.efg"}]}"""))
+```
+
 ### Response
 
 Returns the created or updated suppliers in `data.suppliers`.
@@ -191,6 +234,21 @@ Delete suppliers by their IDs. Non-existent IDs are silently ignored. Deleting a
     "ids": [1, 2, 3, 4]
   }
 }
+```
+
+### Code examples
+
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/supplier \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"ids":[1,2]}'
+```
+
+Kotlin:
+```kotlin
+println(papayaPost("/api/v1/supplier", "DELETE", """{"ids":[1,2]}"""))
 ```
 
 ### Response
