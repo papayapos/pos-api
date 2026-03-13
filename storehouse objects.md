@@ -1,99 +1,118 @@
-**stock item group**
+# Storehouse Object Reference
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, id in database |
-| name | string | name |
-| type | number | Type of the group, currently supported values are 1 = alcohol, 2 = other |
-| items | array of stock item objects | items belonging to group |
+Shared object definitions used across inventory endpoints.
 
-**Stock item**
+---
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, Id of stock item in Papaya.|
-| title | string | Name of item |
-| amount | number | Amount of item in storehouse |
-| priceNetAverage | number | Average net price of item, calculated from stock change cards |
-| priceFixed | number | price of item, set by user |
-| vatRate | number | vat rate of item |
-| measuringUnit | string | measuring unit of item |
-| secondaryMeasuringUnit | string | secondary measuring unit |
-| unitCoefficient | number | conversion coefficient between primary and secondary unit |
-| productCode | string | product code |
-| minimalStockAmount | number | minimal stock amount, used in reports |
+## Stock Item Group
 
-**recipe**
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Group ID |
+| `name` | string | Group name |
+| `type` | string | Group type: `ALCOHOL` or `OTHER` |
+| `items` | Stock Item[] | Items belonging to this group |
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| accountableItemId | string | UUID of accountable item |
-| items | array of recipe item objects | items of recipe |
+---
 
+## Stock Item
 
-**recipe item** 
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Item ID |
+| `externalId` | string | External system identifier |
+| `title` | string | Item name |
+| `productCode` | string | Product code |
+| `measuringUnit` | string | Primary measuring unit (e.g. `kg`, `l`, `piece`) |
+| `secondaryMeasuringUnit` | string | Secondary measuring unit |
+| `unitCoefficient` | number | Conversion factor from primary to secondary unit (e.g. `1000` for kg → g) |
+| `minimalStockAmount` | number | Minimum stock threshold, used in reports |
+| `priceFixed` | number | Fixed price set by user |
+| `priceNetAverage` | number | Average net purchase price, calculated from stock change cards. Read-only. |
+| `amount` | number | Current stock amount. Only present in [inventory](inventory.md) GET responses with `withAmounts: true`. |
+| `vatRate` | number | VAT rate in % |
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| stockItem | stock item object | stock item object associated with recipe |
-| amountUsed | number | amount of item used in recipe |
-| unit | number | unit used in recipe, 1 = primary, 2 = secondary | 
+---
 
-**Stock change card** 
+## Inventory
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, id of card in database |
-| storehouseId | number | long, storehouse id |
-| createTime | string | create time, |
-| placedTime | string | placed time, plays role in stock taking process which is currently not part of API, use same time as create time for now |
-| accType | number | type of stock change card, currently 1 = Operating costs, 2 = SALE, 3 = Refund of operating costs, 4 = Refund of sale, 5 = Stock taking receipt, 6 = Stock taking invoice, stock taking is currently not part of API|
-| documentType | number | type of bill associented with card, 1 = Fiscal receipt, 2 = invoice, 3 = other |
-| documentId | string | id of document associated with card, for example accounting transaction |
-| type | string | type of change, RECEIPT_CARD = when goods are added to storehouse, ISSUE_CARD = when goods are removed from storehouse |
-| supplier | supplier object| supplier|
-| orderNumber | string | order number|
-| deliveryNote | string | delivery note |
-| note | string | another note |
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Inventory ID |
+| `name` | string | Inventory name |
+| `description` | string | Inventory description |
+| `groups` | Stock Item Group[] | Current state of the inventory. Only populated in GET responses with `withAmounts: true`. Ignored in UPDATE and DELETE requests. |
 
-**supplier**
+---
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| name | string | name |
-| address| string | address|
-| city | string | city|
-| country | string | country |
-| ico | string | ico |
-| dic | string | dic  |
-| icDph | string | icdph |
-| contactPerson | string | name of someone responsible |
-| phone | string | phone | 
-| email | string | email | 
-| registration| string | registration |
-| registrationNumber | string | registration number |
-| registrationDate | string | registration date |
+## Stock Change Card
 
-**Stock change card item**
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Card ID |
+| `inventoryId` | number | ID of the inventory this card belongs to |
+| `createTime` | string | Creation time. Format: `dd.MM.yyyy HH:mm:ss` |
+| `placedTime` | string | Placement time. Format: `dd.MM.yyyy HH:mm:ss` |
+| `type` | string | Card type: `RECEIPT_CARD` (goods received) or `ISSUE_CARD` (goods issued) |
+| `accType` | number | Accounting type: `1` = operating costs, `2` = sale, `3` = refund of operating costs, `4` = refund of sale, `5` = stock taking receipt, `6` = stock taking invoice |
+| `documentType` | number | Document type: `1` = fiscal receipt, `2` = invoice, `3` = other |
+| `documentId` | string | ID of an associated document (e.g. accounting transaction ID) |
+| `supplier` | Supplier | Supplier associated with this card |
+| `orderNumber` | string | Order number |
+| `deliveryNote` | string | Delivery note reference |
+| `note` | string | Free-text note |
+| `items` | Stock Change Card Item[] | Items affected by this card |
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, Id of stock change card item in Papaya.|
-| amount | number | amount added/subtracted |
-| priceNet | number | net price |
-| vatRate | number | vat rate |
-| stockItemId | number | long, stock item id |
-| stockItemTitle | string | title of item |
-| measuringUnit | string | measuring unit |
-| stockChangeCardId | number | long, id of stock change card this item belongs to |
-| entryId | string | id of accounting entry, UUID |
+---
 
-**Inventory**
+## Stock Change Card Item
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, id of storehouse in database |
-| name | string | name of the storehouse|
-| description | string | description of the storehouse |
-| groups | array of stock item group objects | Current state of storehouse. This object is only useful for get requests. In post and delete requests this field is ignored. Each group contains stock items. |
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Card item ID |
+| `stockItemId` | string (UUID) | ID of the referenced stock item |
+| `stockItemTitle` | string | Name of the stock item (for display) |
+| `measuringUnit` | string | Unit of measurement |
+| `amount` | number | Amount added (RECEIPT_CARD) or removed (ISSUE_CARD) |
+| `priceNet` | number | Net price per unit |
+| `vatRate` | number | VAT rate in % |
+| `stockChangeCardId` | number | ID of the card this item belongs to |
+| `entryId` | string (UUID) | ID of the associated accounting entry (if any) |
 
+---
+
+## Supplier
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Supplier ID |
+| `name` | string | Supplier name |
+| `address` | string | Street address |
+| `city` | string | City |
+| `country` | string | Country |
+| `contactPerson` | string | Name of contact person |
+| `phone` | string | Phone number |
+| `email` | string | Email address |
+| `ico` | string | Company registration number (IČO) |
+| `dic` | string | Tax ID (DIČ) |
+| `icDph` | string | VAT registration number (IČ DPH) |
+| `registration` | boolean | Whether the supplier is registered |
+| `registrationNumber` | string | Registration number |
+| `registrationDate` | string | Registration date |
+
+---
+
+## Recipe
+
+| Field | Type | Description |
+|---|---|---|
+| `accountableItemId` | string (UUID) | UUID of the catalog item this recipe is assigned to |
+| `items` | Recipe Item[] | Ingredients used in this recipe |
+
+## Recipe Item
+
+| Field | Type | Description |
+|---|---|---|
+| `stockItem` | Stock Item | The stock item used as an ingredient |
+| `amountUsed` | number | Amount of this ingredient consumed per serving |
+| `unit` | number | Unit used: `1` = primary unit, `2` = secondary unit |

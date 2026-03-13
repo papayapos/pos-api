@@ -1,54 +1,50 @@
-**Endpoint: /api/v1/inventory**
+# POST /api/v1/inventory
 
-[Get](GET)
+CRUD operations for inventories (storehouses). Each inventory independently tracks stock amounts for items. Amounts are calculated from [cards](card.md), starting at zero.
 
-[Create or Update](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-[Delete](#DELETE)
+Sections: [GET](#get) | [UPDATE](#update) | [DELETE](#delete)
 
-Inventories allow users to track amounts of [items](item.md). Furthermore, users can create multiple inventories and track amount of items in each of them separately. Amount of item in each inventory is calculated from [cards](card.md), initially starting on zero. 
+---
 
-### GET ###
+## GET
 
-For getting current state of inventories we have multiple options, from getting everything as well as allowing you to select specific inventories and items.
+Fetch inventories. Optionally include current item amounts.
 
-* Sending empty `data` field will make API return all inventories.
-* Items will be returned only if `withAmounts` is `true` and some inventory is queried.
-* Sending array of query objects.
-    * Allows you to specify which inventories you want to get by their `id`.
+- Sending empty `data` returns all inventories without item amounts.
+- To get item amounts, set `withAmounts: true` and specify which inventories to query in the `inventories` array.
+- You can filter items within each inventory using `itemIds`.
+- Non-existent inventory or item IDs are silently ignored.
 
-> In case you send non-existent item or inventory ids, they will be ignored and only existing ones will be fetched.
+> To update amounts or average price of items, use the [card](card.md) endpoint. To manage item data, use the [item](item.md) endpoint.
 
-**Request data**
+### Request fields
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventories  | array of inventory query objects | Each object contains inventory id and its title |
-| withAmounts  | boolean | If items with amounts should be included in response |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `inventories` | object[] | no | List of inventory queries. See fields below. |
+| `withAmounts` | boolean | no | If `true`, includes items and their current amounts in the response. Requires `inventories` to be set. |
 
-**Inventory query**
+**Inventory query object:**
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventoryId  | number | id of inventory to fetch |
-| itemIds  | array of UUID strings | filter returned items by their ID |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `inventoryId` | number | yes | ID of the inventory to fetch |
+| `itemIds` | `string[]` (UUID) | no | Filter returned items to these IDs only |
 
-> `inventoryId` required
-> 
+### Request examples
 
-**Request Examples**
-
-For getting all inventories, you can send empty data.
+All inventories (no amounts):
 
 ```json
 {
   "action": "GET",
-  "data": {
-  }
+  "data": {}
 }
 ```
 
-For specific inventory with all items in it, you can send inventory query with just `inventoryId` and `withAmounts`. You can send multiple inventory queries in single request. For simplicity of example there is only one query in the example.
+Specific inventory with all item amounts:
 
 ```json
 {
@@ -64,7 +60,7 @@ For specific inventory with all items in it, you can send inventory query with j
 }
 ```
 
-To filter items from an inventory, add `itemIds`. This filtering is specific for each inventory query
+Specific inventory with filtered items:
 
 ```json
 {
@@ -73,7 +69,10 @@ To filter items from an inventory, add `itemIds`. This filtering is specific for
     "inventories": [
       {
         "inventoryId": 1,
-        "itemIds": ["08850701-060c-4381-9805-185f8f846138", "a0aa6b7d-9513-416b-938b-3e4bfb5a47d5"]
+        "itemIds": [
+          "08850701-060c-4381-9805-185f8f846138",
+          "a0aa6b7d-9513-416b-938b-3e4bfb5a47d5"
+        ]
       }
     ],
     "withAmounts": true
@@ -81,75 +80,73 @@ To filter items from an inventory, add `itemIds`. This filtering is specific for
 }
 ```
 
-**Response**
+### Response
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error | string | Error message with cause of failure. This field is only set if success is false. |
+`data.inventories` — array of inventory objects. See [storehouse objects](storehouse%20objects.md) for full field definitions.
 
-Contents of data for this response:
+| Field | Type | Description |
+|---|---|---|
+| `inventories` | object[] | Inventories matching the request |
 
-Response contains inventory objects with current state of items in it, items are stored in group objects. For the definition of objects refer to the [Object documentation](storehouse%20objects.md).
-
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventories | array of inventory objects | Inventories that match requested ids. Field will contain empty array if there are no matches.
-
-**Response Example**
+### Response example
 
 ```json
-
 {
-    "data": {
-        "inventories": [
-            {
-                "id": 1,
-                "name": "Main inventory"
-                "description": "Description of main inventory",
-                "groups": [
-                    {
-                        "id": 1,
-                        "name": "Fruit"
-                    }
-
-                ]
-            }
+  "success": true,
+  "data": {
+    "inventories": [
+      {
+        "id": 1,
+        "name": "Main inventory",
+        "description": "Description of main inventory",
+        "groups": [
+          {
+            "id": 1,
+            "name": "Fruit",
+            "items": [
+              {
+                "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+                "title": "Apple",
+                "amount": 42.5,
+                "measuringUnit": "kg"
+              }
+            ]
+          }
         ]
-    },
-    "success": true
+      }
+    ]
+  }
 }
-
 ```
 
-### UPDATE ###
+---
 
-For creating inventories you have these options.
+## UPDATE
 
-* Sending inventory **without** `id`. API will create new inventory and generate `id` for it.
-* Sending inventory **with** `id`.
-    * In case inventory with such `id` already exists, it will be updated.
-    * In case inventory does not exist, API will create new inventory and use provided `id`.
+Create or update inventories.
 
-> You can send empty inventory object and you will get back inventory without `name` or `description` with only `id`.
->
-> Updating deleted inventory will restore it, including cards.
+- Request **without** `id` → creates a new inventory with a generated ID.
+- Request **with** `id`:
+  - If the inventory exists → updates it.
+  - If it does not exist → creates it using the provided ID.
+- Updating a deleted inventory restores it along with its cards.
+- The `groups` field is ignored in UPDATE requests.
 
-You might expect that updating amounts would also be part of inventory api. That is not the case as there is a lot of information that Papaya allows you to record in inventory movements. If you want to update amounts or average price of items, you should check [card](card.md) endpoint. As for updating other item data you should check [item](item.md) endpoint.
+### Request fields
 
-**Request data**
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `inventories` | object[] | yes | Inventories to create or update |
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventories  | array of inventory objects | Inventories to create or update |
+**Inventory object:**
 
-> `groups` field in inventory object is only relevant for [get](#GET) and [delete](#DELETE) requests and will be ignored in update requests.
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | ID of the inventory. Omit to auto-generate. |
+| `name` | string | no | Name of the inventory |
+| `description` | string | no | Description of the inventory |
 
-If you provide inventory without *id*, API will return error 2.
-
-**Request Example**
-For simplicity of example, there is only one inventory in array. Of course you can send multiple object in one request.
+### Request example
 
 ```json
 {
@@ -158,66 +155,52 @@ For simplicity of example, there is only one inventory in array. Of course you c
     "inventories": [
       {
         "id": 1,
-        "name": "Name of inventory",
-        "description": "Description of this inventory"
+        "name": "Main inventory",
+        "description": "Primary storehouse for all ingredients"
       }
     ]
   }
 }
 ```
 
-**Response**
+### Response
 
-Successful update request will return array of inventory objects that were created or updated. If there is any problem and response `success` field is false, then there will be no changes to data and you need to resend request.
+Returns the created or updated inventory objects in `data.inventories`.
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error | string | Error message with cause of failure. This field is only set if success is false. |
-
-Contents of data for this response:
-
-Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](storehouse%20objects) in wiki.
-
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventores | array of inventory objects | Created or updated inventories |
-
-**Response Example**
+### Response example
 
 ```json
 {
-    "data": {
-        "inventories": [
-            {
-              "id": 1,
-              "name": "Name of inventory",
-              "description": "Description of this inventory"
-            }
-        ]
-    },
-    "success": true
+  "success": true,
+  "data": {
+    "inventories": [
+      {
+        "id": 1,
+        "name": "Main inventory",
+        "description": "Primary storehouse for all ingredients"
+      }
+    ]
+  }
 }
-
 ```
-### DELETE ###
 
-For deleting inventories, you need to send their `id` in request. 
+---
 
-API keeps track of deleted inventories. In case you want to restore them, you can send update request with that inventory `id`.
+## DELETE
 
-> Non-existent `ids` will be ignored and response will contain only deleted inventories.
->
-> It is not possible to delete inventory with `id` 1. Attempting to do it will return error.
+Delete inventories by their IDs.
 
-**Request data**
+- Non-existent IDs are silently ignored.
+- Deleted inventories can be restored by sending an UPDATE request with the same ID.
+- Inventory with `id: 1` (the default inventory) cannot be deleted.
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| ids | array of numbers | ids of inventories to be deleted.|
+### Request fields
 
-**Request Example**
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `ids` | `number[]` | yes | IDs of inventories to delete |
+
+### Request example
 
 ```json
 {
@@ -228,33 +211,16 @@ API keeps track of deleted inventories. In case you want to restore them, you ca
 }
 ```
 
-**Response**
+### Response
 
-Successful delete request will return array of inventory objects that were deleted. If there is any problem and response *success* field is false, then there were no changes to data and you need to resend request.
+Returns the deleted inventory objects in `data.inventories`. The `groups` field is not included in the delete response.
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-|data| json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-|success | boolean | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error | string | Error message with cause of failure. This field is only set if success is false. |
-
-Contents of data for this response:
-
-Data contains array of inventory objects. For more detailed definition of objects refer to [Object documentation](storehouse%20objects) in wiki.
-
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| inventories | array of inventory objects | Deleted inventories. Note that field *groups* will not be set even if inventory is not empty. |
-
-> `groups` field will not be set in response.
-
-**Response Example**
+### Response example
 
 ```json
-
 {
   "success": true,
-  "data" {
+  "data": {
     "inventories": [
       {
         "id": 2,
@@ -264,17 +230,14 @@ Data contains array of inventory objects. For more detailed definition of object
       {
         "id": 3,
         "name": "Water"
-      },
+      }
     ]
   }
 }
 ```
 
-When attempting to delete default inventory, with `id` 1
+### Errors
 
-```json
-{
-    "error": "4000: Default Inventory cannot be deleted",
-    "success": false
-}
-```
+| Code | Message | Cause |
+|---|---|---|
+| `4000` | Default Inventory cannot be deleted | Attempted to delete inventory with `id: 1` |

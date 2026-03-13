@@ -1,64 +1,55 @@
-**Endpoint: /api/v1/inventory/item**
+# POST /api/v1/inventory/item
 
+CRUD operations for stock items. Items are organized into groups.
 
-[Get](#GET)
+Items can be used to directly track product quantities, or as components in recipes assigned to menu items. For tracking current amounts per inventory, use the [inventory](inventory.md) endpoint. To add or subtract stock, use the [card](card.md) endpoint.
 
-[Create or Update](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-[Delete](#DELETE)
-  
-Items are basic building block of inventory API. They can either be used to track amounts of products themselves, or be used as components for [recipes - temporary link](recipe.md) (something something build complex something something). Along with items, it's important to check [inventory](inventory.md) endpoint for more information about tracking amounts of items and [card](card.md) endpoint for more information about manipulating amounts.
+Sections: [GET](#get) | [UPDATE](#update) | [DELETE](#delete)
 
-### Get ###
+---
 
-**Request data**
+## GET
 
-| field name   |       type       | Description                                             |
-| :----------- | :--------------: | :------------------------------------------------------ |
-| itemIds      | array of strings | Ids of requested stock items. Values are java UUID type |
-| productCodes | array of strings | Product codes of requested items                        |
-| groupIds     | array of number  | Group ids whose items should be returned                |
+Fetch stock items, optionally filtered by item IDs, product codes, or group IDs.
 
-For getting stock items from API you have these options.
+- Sending empty `data` returns all non-deleted items.
+- Multiple filter fields are combined as a union — items matching any filter are returned once.
 
-* Sending empty ```data``` field will make API return all available non-deleted stock items.
-* Sending ```itemIds``` will make API return any stock items whose ```id``` matches requested ```itemIds```
-* Sending ```productCodes``` will make API return any stock items whose ```productCode``` matches requested ```productCodes```
-* Sending ```groupIds``` will make API return groups whose ```id``` matches requested ```groupIds``` and all their items.
-* Sending combination of ```ids```, ```productCodes``` or ```groupIds``` will make API return items that match either of requested data. If there are items that match multiple requested fields they will be returned only once.
+### Request fields
 
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `itemIds` | `string[]` (UUID) | no | Return items matching these IDs |
+| `productCodes` | `string[]` | no | Return items matching these product codes |
+| `groupIds` | `number[]` | no | Return all items in these groups |
 
+### Request examples
 
-**Request Examples**
+All items:
 
-For all items: 
-
-```json 
-
+```json
 {
   "action": "GET",
-  "data": {
-  }
+  "data": {}
 }
-
 ```
 
-For request where only items that match ```ids``` are returned:
+Filter by item IDs:
 
 ```json
 {
   "action": "GET",
   "data": {
-    "itemIds": [1, 2, 3],
+    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"]
   }
 }
 ```
 
-For request where only items that match ```product codes``` are returned: 
+Filter by product codes:
 
 ```json
-
-
 {
   "action": "GET",
   "data": {
@@ -67,8 +58,9 @@ For request where only items that match ```product codes``` are returned:
 }
 ```
 
-```json
+Filter by group IDs:
 
+```json
 {
   "action": "GET",
   "data": {
@@ -77,108 +69,111 @@ For request where only items that match ```product codes``` are returned:
 }
 ```
 
-Combined request, getting items that match ```itemIds``` **or** ```productCodes``` **or** are in groups with ```groupIds```.
+Combined filter (union of all matches):
 
-```json 
+```json
 {
   "action": "GET",
   "data": {
-    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
+    "itemIds": [
+      "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+      "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f"
+    ],
     "productCodes": ["123", "5555"],
     "groupIds": [1, 2]
   }
 }
-
 ```
 
+### Response
 
+`data.groups` — array of stock item group objects, each containing their items. See [storehouse objects](storehouse%20objects.md) for full field definitions.
 
-**Response**
+> `amount` is not included in this response. Use [/api/v1/inventory](inventory.md) to get current stock amounts.
 
-Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
-
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
-
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
-
-Contents of data for this response:
-
-| field name |                      type                      | Description             |
-| :--------- | :--------------------------------------------: | :---------------------- |
-| groups     | array of json objects of type Stock Item Group | Groups with stock items |
-
-**Response Example**
+### Response example
 
 ```json
-
 {
-    "data": {
-        "groups": [
-            {
-                "id": 1,
-                "name": "Fruit",
-                "items": [
-                    {
-                        "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-                        "externalId": "ext 123"
-                        "measuringUnit": "kg",
-                        "minimalStockAmount": 3,
-                        "priceFixed": 5,
-                        "priceNetAverage": 2.5,
-                        "productCode": "12345",
-                        "secondaryMeasuringUnit": "g",
-                        "title": "Apple",
-                        "unitCoefficient": 1000,
-                        "vatRate": 20
-                    }
-                ]
-            }
+  "success": true,
+  "data": {
+    "groups": [
+      {
+        "id": 1,
+        "name": "Fruit",
+        "type": "OTHER",
+        "items": [
+          {
+            "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "externalId": "ext-123",
+            "title": "Apple",
+            "productCode": "12345",
+            "measuringUnit": "kg",
+            "secondaryMeasuringUnit": "g",
+            "unitCoefficient": 1000,
+            "minimalStockAmount": 3,
+            "priceFixed": 5,
+            "priceNetAverage": 2.5,
+            "vatRate": 20
+          }
         ]
-    },
-    "success": true
+      }
+    ]
+  }
 }
 ```
 
-### Update ###
+---
 
-Creating and updating items and groups can be done simultaneously in one request. Depending on data provided in request API will accordingly create or update items and groups.
+## UPDATE
 
-* Sending groups **without** `id` field. API will create new groups and generate `id` for them.
-* Sending items **without** `id` field set. API will create new items and generate `id` for them.
-* Sending groups **with** `id` field. 
-    * In case groups do not exist, API will create new groups with id provided in request.
-    * In case groups already exist, their name will be updated if it was provided.
-* Sending items **with** `id` field set. 
-    * In case item does not exist, API will use provided `id` to create items 
-    * In case item already exists it will be updated.
+Create or update items and groups. Both can be done simultaneously in one request.
 
+- Group/item **without** `id` → created with a generated ID.
+- Group/item **with** `id`:
+  - Does not exist → created using the provided ID.
+  - Already exists → updated.
+- You can mix items with and without IDs in one request.
+- To move an item to a different group, send an update with the item nested under the desired group.
+- An item always belongs to exactly one group.
 
-> It is possible to combine both creation methods in one request. Sending both items/groups with and without ids.
+> `amount` and `priceNetAverage` cannot be set here — they are calculated from stock cards. See [card](card.md).
 >
-> All fields both in group and item objects are optional.
+> When updating an existing item, all its fields should be provided.
 >
-> `Amount` and `priceNetAverage` fields cannot be set by create or update because they are calculated from different source. For more information refer to [card](card.md) endpoint. 
->
-> When updating existing item all its fields must be set.
->
-> To move existing item to different group send update request with item in desired group.
->
-> Item is always in exactly one group.
->
-> Alcohol group name cannot be changed.
+> The Alcohol group name cannot be changed.
 
-**Request data**
+### Request fields
 
-| field name |               type                | Description                  |
-| :--------- | :-------------------------------: | :--------------------------- |
-| groups     | array of stock item group objects | stock item groups with items |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `groups` | object[] | yes | Stock item groups containing items to create or update |
 
-**Request Example**
+**Group object:**
 
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | Group ID. Omit to auto-generate. |
+| `name` | string | no | Name of the group |
+| `type` | string | no | Group type: `ALCOHOL` or `OTHER` |
+| `items` | object[] | no | Items belonging to this group |
+
+**Item object:**
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | string (UUID) | no | Item ID. Omit to auto-generate. |
+| `externalId` | string | no | External system identifier |
+| `title` | string | no | Name of the item |
+| `productCode` | string | no | Product code |
+| `measuringUnit` | string | no | Primary measuring unit (e.g. `kg`, `l`, `piece`) |
+| `secondaryMeasuringUnit` | string | no | Secondary measuring unit |
+| `unitCoefficient` | number | no | Conversion factor between primary and secondary unit (e.g. 1000 for kg→g) |
+| `minimalStockAmount` | number | no | Minimum stock threshold, used in reports |
+| `priceFixed` | number | no | Fixed price set by user |
+| `vatRate` | number | no | VAT rate in % |
+
+### Request example
 
 ```json
 {
@@ -192,7 +187,7 @@ Creating and updating items and groups can be done simultaneously in one request
         "items": [
           {
             "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-            "externalId": "ext 123"
+            "externalId": "ext-123",
             "title": "Apple",
             "priceFixed": 5,
             "vatRate": 20,
@@ -207,88 +202,82 @@ Creating and updating items and groups can be done simultaneously in one request
     ]
   }
 }
-
 ```
 
+### Response
 
-**Response**
+Returns the created or updated groups with their items in `data.groups`.
 
-Response contains array of group objects with their items. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
+> `amount` is not included. Use [/api/v1/inventory](inventory.md) for stock amounts.
 
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
-
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
-
-| field name |                      type                      | Description                                   |
-| :--------- | :--------------------------------------------: | :-------------------------------------------- |
-| groups     | array of json objects of type Stock Item Group | Groups and items that were created or updated |
-
-**Response Example**
+### Response example
 
 ```json
 {
-    "data": {
-        "groups": [
-            {
-                "id": 1,
-                "name": "Fruit",
-                "items": [
-                    {
-                        "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-                        "externalId": "ext 123"
-                        "measuringUnit": "kg",
-                        "minimalStockAmount": 3,
-                        "priceFixed": 5,
-                        "priceNetAverage": 0,
-                        "productCode": "12345",
-                        "secondaryMeasuringUnit": "g",
-                        "title": "Apple",
-                        "unitCoefficient": 1000,
-                        "vatRate": 20
-                    }
-                ]
-            }
+  "success": true,
+  "data": {
+    "groups": [
+      {
+        "id": 1,
+        "name": "Fruit",
+        "type": "OTHER",
+        "items": [
+          {
+            "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "externalId": "ext-123",
+            "title": "Apple",
+            "productCode": "12345",
+            "measuringUnit": "kg",
+            "secondaryMeasuringUnit": "g",
+            "unitCoefficient": 1000,
+            "minimalStockAmount": 3,
+            "priceFixed": 5,
+            "priceNetAverage": 0,
+            "vatRate": 20
+          }
         ]
-    },
-    "success": true
+      }
+    ]
+  }
 }
-
 ```
 
-### Delete
+---
 
-Currently it is possible to delete individual items or delete whole group along with its items.
+## DELETE
 
-* Sending `itemIds` will delete items whose `id` matches `itemIds`.
-* Sending `groupIds` will delete groups whose `id` matches `groupIds` and all their items.
-* Sending combination of `itemIds` and `groupIds` will delete groups whose `id` matches `groupIds`, their items, and items whose `id` matches `itemIds`.
+Delete individual items or entire groups (including all their items).
 
->
+- `itemIds` → deletes matching items.
+- `groupIds` → deletes matching groups and all their items.
+- Both can be combined in one request.
 
-**Request data**
+### Request fields
 
-| field name |       type       | Description                          |
-| :--------- | :--------------: | :----------------------------------- |
-| itemIds    | array of numbers | ids of items that are to be deleted. |
-| groupIds   | array of numbers | ids of groups that should be deleted |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `itemIds` | `string[]` (UUID) | no | IDs of items to delete |
+| `groupIds` | `number[]` | no | IDs of groups to delete (along with all their items) |
 
-**Request Example**
+At least one of `itemIds` or `groupIds` must be provided.
 
-Request for deletion using `itemIds`.
+### Request examples
+
+Delete specific items:
 
 ```json
 {
   "action": "DELETE",
   "data": {
-    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
+    "itemIds": [
+      "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+      "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f"
+    ]
   }
 }
 ```
-Request for deletion using `groupIds`.
+
+Delete a group and all its items:
 
 ```json
 {
@@ -299,64 +288,52 @@ Request for deletion using `groupIds`.
 }
 ```
 
-Combined request deletion using both `groupIds` and `itemIds`.
+Delete both items and groups:
 
 ```json
 {
   "action": "DELETE",
   "data": {
-    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", "27fd9916-aaaa-43d7-a3a4-0946f41b3c0f", "27fd9916-bbbb-43d7-a3a4-0946f41b3c0f", ""27fd9916-cccc-43d7-a3a4-0946f41b3c0f""],
-    "groupIds": [1, 2]
+    "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"],
+    "groupIds": [2]
   }
 }
 ```
-**Response**
 
-Successful delete request will return array of groups with items. If there is any problem and response success field is false, then no items were deleted. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki. 
+### Response
 
-> Deleted items are always returned in their `groups` even if group was not deleted. This is for consistency with other responses and informative purposes. To delete group you must provide it's `id` in `groupIds`.
+Returns deleted groups with their items in `data.groups`. Deleted items are always returned inside their group, even if the group itself was not deleted.
 
-> Stock item `amount` will not be set in response. If you want to know amount, use request on [/inventory](inventory.md) endpoint.
+If `success` is `false`, no items were deleted.
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+> `amount` is not included. Use [/api/v1/inventory](inventory.md) for stock amounts.
 
-Contents of data for this response:
-
-| field name |                      type                      | Description              |
-| :--------- | :--------------------------------------------: | :----------------------- |
-| groups     | array of json objects of type Stock Item Group | Deleted groups and items |
-
-**Response Example**
-
+### Response example
 
 ```json
-
 {
-    "data": {
-        "groups":
-            "id": 1,
-            "name": "Fruid"
-            "items": [
-                {
-                    "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-                    "measuringUnit": "kg",
-                    "minimalStockAmount": 3,
-                    "priceFixed": 5,
-                    "priceNetAverage": 0,
-                    "productCode": "12345",
-                    "secondaryMeasuringUnit": "g",
-                    "title": "Apple",
-                    "unitCoefficient": 1000,
-                    "vatRate": 20
-                }
-            ]
-        },
-    "success": true
+  "success": true,
+  "data": {
+    "groups": [
+      {
+        "id": 1,
+        "name": "Fruit",
+        "items": [
+          {
+            "id": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "title": "Apple",
+            "productCode": "12345",
+            "measuringUnit": "kg",
+            "secondaryMeasuringUnit": "g",
+            "unitCoefficient": 1000,
+            "minimalStockAmount": 3,
+            "priceFixed": 5,
+            "priceNetAverage": 0,
+            "vatRate": 20
+          }
+        ]
+      }
+    ]
+  }
 }
-
-
 ```

@@ -1,138 +1,149 @@
+# Transaction Object Reference
 
- ## Card Data Model ## 
+Shared object definitions used across transaction endpoints.
 
-| Field Name             | Type    | Description                                                    |
-|------------------------|---------|----------------------------------------------------------------|
-| id                     | UUID    | The Id of the card data model                                  |
-| operationResult        | String  | The report string for a successful or unsuccessful payment     |
-| fullName               | String  | The full name of the customer                                  |
-| cardNumber             | String  | The masked number of the credit or debit card being used       |
-| cardType               | String  | The type of card being used (Visa,Mastercard,etc.)             |
-| cardPaymentType        | String  | The method of payment being used (CONTACTLESS,etc.)            |
-| createTime             | Date    | The date when the payment was created by the user              |
-| terminalType           | String  | The type of terminal the payment was made from                 |
-| terminalId             | String  | The id of the specific terminal creating the payment           |
-| authorizationCode      | String  | A verification string                                          |
-| applicationId          | String  | The Id that identifies the terminal and it's software revision |
-| panSequence            | String  | Sequential identifier for the card transaction.                |
-| tvr                    | String  | Extra data given by the payment processor                      |
-| tvi                    | String  | Extra data given by the payment processor                      |
-| cvr                    | String  | Extra data given by the payment processor                      |
-| iad                    | String  | Extra data given by the payment processor                      |
-| avc                    | String  | Extra data given by the payment processor                      |
-| act                    | String  | Extra data given by the payment processor                      |
-| arc                    | String  | Extra data given by the payment processor                      |
-| transactionId          | String  | The Id of the accounting transaction                           |
-| variableSymbol         | String  | Bank transaction tracking identifier                           |
-| paymentReceipt         | String  | The receipt formatted by the payment terminal for the customer | 
-| paymentMerchantReceipt | String  | The receipt formatted by the payment terminal for the merchant |
-| hostTransactionId      | String  | The Id returned by the terminal for the payment                |
-| sequenceNumber         | String  | The number of transactions completed by the terminal           |
-| transactionCreateDate  | Date    | The returned terminal creation time for the payment            |
+---
 
- ## TransactionPaymentModel ## 
+## TransactionModel
 
-| Field Name              | Type                                      | Description                                                    |
-|-------------------------|-------------------------------------------|----------------------------------------------------------------|
-| id                      | UUID                                      | The Id of the payment                                          |
-| accountingTransactionId | UUID                                      | The Id of the transaction which is associated with the payment |
-| paymentType             | [PaymentTypeApiEnum](#PaymentTypeApiEnum) | The payment method used by the customer (CASH,CARD,etc.)       |
-| amount                  | BigDecimal                                | The amount of money to be paid                                 |
-| nominalCompensation     | BigDecimal                                | Rounding to the nearest X cent                                 |
-| cardDataId              | UUID                                      | Id of the card data being submitted                            |
-| cardData                | [CardDataModel](#Card Data Model)         | Debit or credit card information                               |
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Unique transaction ID |
+| `type` | string | Transaction type. See [AccountingTransactionTypeApiEnum](#accountingtransactiontypeapienum). |
+| `area` | object | Area (table) assigned to the transaction |
+| `createTime` | string | Date/time the transaction was created |
+| `closeTime` | string | Date/time the transaction was closed (if applicable) |
+| `priceGross` | number | Total price including VAT |
+| `priceNet` | number | Total price excluding VAT |
+| `priceVat` | number | VAT amount (`priceGross - priceNet`) |
+| `accountingTransactionState` | string | Current state. See [AccountingTransactionStateApiEnum](#accountingtransactionstateapienum). |
+| `transactionPriceAdjustmentCoefficient` | number | Transaction-wide price multiplier (1 = no change, 0.8 = 20% discount) |
 
- ## PaymentTypeApiEnum ## 
+---
 
-| Payment Methods  |
-|------------------|
-| CASH             |
-| CARD             |
-| GASTRO_CHECK     |
-| OPERATING_COST   |
-| HOTEL_SYSTEM     |
-| BANK_TRANSFER    |
-| CALLIO_CARD      |
-| VOUCHER          |
-| QERKO            |
+## EntryModel
 
- ## Entry Model ## 
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Entry ID |
+| `accountingTransactionId` | string (UUID) | ID of the parent transaction |
+| `accountableItemId` | string (UUID) | ID of the catalog item sold |
+| `title` | string | Item name shown on the receipt |
+| `fiscalNote` | string | Custom text printed by a fiscal printer |
+| `bonNote` | string | Custom text printed on a kitchen ticket |
+| `accountingEntryState` | string | Entry state (`CREATED`, `CANCELED`) |
+| `accountingEntryType` | string | Entry type. See [AccountingEntryTypeApiEnum](#accountingentrytypeapienum). |
+| `count` | number | Number of items (e.g. `2` croissants) |
+| `quantity` | number | Quantity per item in the item's measuring unit (informational) |
+| `unit` | string | Measuring unit (informational) |
+| `priceAmount` | number | Original unit price |
+| `priceAdjustCoef` | number | Entry-level discount multiplier |
+| `txAdjustCoef` | number | Transaction-level discount multiplier |
+| `adjustedPrice` | number | Final price after all adjustments |
+| `priceCurrency` | string | Currency. See [CurrencyApiEnum](#currencyapienum). |
+| `vatRateValue` | number | VAT multiplier (e.g. `0.2` means price × 1.2) |
+| `createTime` | string | Date/time the entry was created |
 
-| Field Name              | Type                                                      | Description                                                                         |
-|-------------------------|-----------------------------------------------------------|-------------------------------------------------------------------------------------|
-| id                      | UUID                                                      | Entry model Id                                                                      |
-| accountingTransactionId | UUID                                                      | The Id of the accounting transaction that the model is supposed to be associated to |
-| count                   | BigDecimal                                                | The amount of items requested (**1** steak: 300g)                                   |
-| quantity                | BigDecimal                                                | The quantity amount provided per item  (1 steak: **300**g)                          |
-| unit                    | String                                                    | The quantity measure for the item (g,kg,l,etc.)  (1 steak: 300**g**)                |
-| accountingEntryState    | AccountingEntryStateApiEnum                               | The state of the accounting entry (CREATED,CANCELED)                                |
-| accountingEntryType     | [AccountingEntryTypeApiEnum](#AccountingEntryTypeApiEnum) | The type of accounting entry (SALE,REFUND,etc.)                                     |                                                       |
-| vatRateValue            | BigDecimal                                                | Multiplier to increase the price by a certain percentage (0.2 = price*1.2)          |
-| priceAmount             | BigDecimal                                                | Total price of the transaction                                                      |
-| priceAdjustCoef         | BigDecimal                                                | Discount multiplier for this specific item (0.8 = price*0.8)                        |
-| txAdjustCoef            | BigDecimal                                                | Discount multiplier for the whole transaction (0.8 = price*0.8)                     |
-| adjustedPrice           | BigDecimal                                                | The resulting price from the discount adjustments                                   |
-| priceCurrency           | [CurrencyApiEnum](#CurrencyApiEnum)                       | Currency used for the transaction                                                   |
-| title                   | String                                                    | The name that is shown on the receipt                                               |
-| fiscalNote              | String                                                    | The custom text printed on the receipt by a fiscal printer                          |
-| bonNote                 | String                                                    | The custom text printed on a ticket                                                 |
-| accountableItemId       | UUID                                                      | The Id of item that is being sold                                                   |
-| createTime              | Date                                                      | The date that the transaction was created                                           |
+---
 
-## CurrencyApiEnum ##
+## TransactionPaymentModel
 
-| Currency  |
-|-----------|
-| CZK       |
-| EUR       |
-| HUF       |
-| GBP       |
-| IDR       |
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Payment ID |
+| `accountingTransactionId` | string (UUID) | ID of the transaction this payment belongs to |
+| `paymentType` | string | Payment method. See [PaymentTypeApiEnum](#paymenttypeapienum). |
+| `amount` | number | Amount paid |
+| `nominalCompensation` | number | Rounding adjustment (to nearest cent) |
+| `cardDataId` | string (UUID) | ID of the associated card data (if card payment) |
+| `cardData` | object | Card terminal data. See [CardDataModel](#carddatamodel). |
 
+---
 
-## AccountingEntryTypeApiEnum ##
+## CardDataModel
 
-| Accounting Entry Type |
-|-----------------------|
-| SALE                  |
-| REFUND                |
-| DISCOUNT_FOR_ENTRY    |
-| SURCHARGE_FOR_ENTRY   |
-| DISCOUNT_FOR_TX       |
-| SURCHARGE_FOR_TX      |
-| VOUCHER               |
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Card data record ID |
+| `transactionId` | string | Transaction ID from the terminal |
+| `operationResult` | string | Result string from the payment terminal |
+| `fullName` | string | Cardholder name |
+| `cardNumber` | string | Masked card number |
+| `cardType` | string | Card brand (e.g. `Visa`, `Mastercard`) |
+| `cardPaymentType` | string | Payment method (e.g. `CONTACTLESS`) |
+| `terminalType` | string | Terminal type |
+| `terminalId` | string | Terminal ID |
+| `authorizationCode` | string | Authorization code |
+| `applicationId` | string | Terminal application ID and software revision |
+| `panSequence` | string | Sequential card transaction identifier |
+| `tvr` | string | Terminal verification result (from payment processor) |
+| `tvi` | string | Additional terminal data (from payment processor) |
+| `cvr` | string | Card verification result (from payment processor) |
+| `iad` | string | Issuer application data (from payment processor) |
+| `avc` | string | Application version check (from payment processor) |
+| `act` | string | Application cryptogram type (from payment processor) |
+| `arc` | string | Authorization response code (from payment processor) |
+| `variableSymbol` | string | Bank transaction tracking identifier |
+| `paymentReceipt` | string | Customer receipt formatted by the payment terminal |
+| `paymentMerchantReceipt` | string | Merchant receipt formatted by the payment terminal |
+| `hostTransactionId` | string | Transaction ID returned by the terminal host |
+| `sequenceNumber` | string | Number of transactions completed by this terminal |
+| `createTime` | string | Date/time the payment was created |
+| `transactionCreateDate` | string | Transaction creation time returned by the terminal |
 
+---
 
+## AccountingTransactionStateApiEnum
 
- ## TransactionModel ## 
+| Value | Description |
+|---|---|
+| `OPENED` | Transaction is open and can accept entries |
+| `LOCKED` | Transaction is locked |
+| `NOT_PRINTED` | Transaction closed but not yet printed |
+| `CANCELED` | Transaction was cancelled |
+| `CLOSED` | Transaction is closed and paid |
+| `EXPORTED` | Transaction has been exported |
+| `CLOSED_EDIT` | Transaction is closed but still editable |
 
-| Field Name                            | Type                                                                   | Description                                                        |
-|---------------------------------------|------------------------------------------------------------------------|--------------------------------------------------------------------|
-| id                                    | UUID                                                                   | Unique accounting transaction Id                                   |
-| area                                  | AreaModel                                                              | The model to describe the area (table) assigned to the transaction |
-| type                                  | [AccountingTransactionTypeApiEnum](#AccountingTransactionStateApiEnum) | The type of transaction (RECEIPT,INVOICE)                          |
-| createTime                            | Date                                                                   | The date the transaction was created                               |
-| closeTime                             | Date                                                                   | The date the transaction was closed                                |
-| priceGross                            | BigDecimal                                                             | Price with vat                                                     |
-| priceNet                              | BigDecimal                                                             | Price without vat                                                  |
-| priceVat                              | BigDecimal                                                             | The vat itself (priceGross - priceNet)                             |
-| accountingTransactionState            | [AccountingTransactionTypeApiEnum](#AccountingTransactionStateApiEnum) | The current state of the transaction                               |                                                          |
-| transactionPriceAdjustmentCoefficient | BigDecimal                                                             | The coefficient that the transaction was discounted by             |
+## AccountingTransactionTypeApiEnum
 
- ## AccountingTransactionStateApiEnum ## 
+| Value | Description |
+|---|---|
+| `RECEIPT` | Fiscal receipt |
+| `INVOICE` | Invoice |
 
-| Transaction states |     
-|--------------------|
-| OPENED             |     
-| LOCKED             |     
-| NOT_PRINTED        |     
-| CANCELED           |     
-| CLOSED             |     
-| EXPORTED           |     
-| CLOSED_EDIT        |     
+## AccountingEntryTypeApiEnum
 
-## AccountingTransactionTypeApiEnum ##
-| Transaction type |
-|------------------|
-| RECEIPT          |
-| INVOICE          |
+| Value | Description |
+|---|---|
+| `SALE` | Regular sale |
+| `REFUND` | Refund of a sale |
+| `DISCOUNT_FOR_ENTRY` | Discount applied to a single entry |
+| `SURCHARGE_FOR_ENTRY` | Surcharge applied to a single entry |
+| `DISCOUNT_FOR_TX` | Discount applied to the entire transaction |
+| `SURCHARGE_FOR_TX` | Surcharge applied to the entire transaction |
+| `VOUCHER` | Voucher redemption |
+
+## PaymentTypeApiEnum
+
+| Value |
+|---|
+| `CASH` |
+| `CARD` |
+| `GASTRO_CHECK` |
+| `OPERATING_COST` |
+| `HOTEL_SYSTEM` |
+| `BANK_TRANSFER` |
+| `CALLIO_CARD` |
+| `VOUCHER` |
+| `QERKO` |
+
+## CurrencyApiEnum
+
+| Value |
+|---|
+| `CZK` |
+| `EUR` |
+| `HUF` |
+| `GBP` |
+| `IDR` |

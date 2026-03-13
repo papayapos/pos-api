@@ -1,91 +1,106 @@
-**Endpoint Summary**
+# Papaya POS API
 
+## Endpoint Summary
 
+| Endpoint | Description |
+|---|---|
+| [POST /api/v1/areas](areas.md) | CRUD operations for areas (tables) |
+| [POST /api/v1/areas/rooms](rooms.md) | CRUD operations for rooms (room, sector, etc.) |
+| [POST /api/v1/salePlace](salePlace.md) | Read sale places (cashiers) |
+| [POST /api/v1/catalog/item](catalogItem.md) | Read catalog items (pricelist) |
+| [POST /api/v1/inventory](inventory.md) | CRUD operations for inventories |
+| [POST /api/v1/inventory/card](card.md) | Receive or issue stock with inventory cards |
+| [POST /api/v1/inventory/item](item.md) | CRUD operations for stock items |
+| [POST /api/v1/supplier](supplier.md) | CRUD operations for suppliers |
+| [POST /api/v1/memberCard](memberCard.md) | CRUD operations for member/loyalty cards |
+| [POST /api/v1/transaction/accountingTransaction](accountingTransaction.md) | Open and cancel orders/bills |
+| [POST /api/v1/transaction/accountingEntry](accountingEntry.md) | Add or cancel items on a bill |
+| [POST /api/v1/transaction/accountingEntry/date](accountingEntryByDate.md) | Read entries by date range |
+| [POST /api/v1/transaction/payment](payment.md) | Pay for a transaction |
+| [POST /api/v1/transaction/discount](discount.md) | Apply a discount to a transaction or entry |
 
+---
 
-| Endpoint                                                               | Description                                     |
-|------------------------------------------------------------------------|-------------------------------------------------|
-| [/api/v1/areas](areas.md#)                                             | CRUD operations for areas (tables)              |
-| [/api/v1/areas/rooms](rooms.md#)                                       | CRUD operations for rooms (room, sector etc.)   |
-| [/api/v1/salePlace](salePlace.md#)                                     | READ operations for sale place(cashier)         |
-| [/api/v1/catalog/item](catalogItem.md#)                                | CRUD operations for catalog items               |
-| [/api/v1/inventory](inventory.md#)                                     | CRUD operations for inventories                 |
-| [/api/v1/inventory/card](card.md#)                                     | Receive or issue the stock with inventory cards |
-| [/api/v1/inventory/item](item.md#)                                     | Work with stock items                           |
-| /api/v1/inventory/recipe                                               | Create and assign recipes to menu items         |
-| /api/v1/inventory/movement (todo define)                               | Read inventory movements not grouped in cards   |
-| [/api/v1/supplier](supplier.md#)                                       | CRUD for supplier                               |
-| [/api/v1/memberCard](memberCard.md#)                                   | CRUD operations on Member/Loyalty Cards         |
-| [/api/v1/transaction/accountingTransaction](accountingTransaction.md#) | CRUD for order and bill (Create/Close)          |
-| [/api/v1/transaction/accountingEntry](accountingEntry.md#)             | CRUD operations for accounting entry            |
-| [/api/v1/transaction/payment](payment.md#)                             | Pay for a transaction                           |
-| [/api/v1/transaction/discount](discount.md#)                           | Discount a transaction                          |
+## Sending Requests
 
+**All requests use HTTP POST.**
 
+### Headers
 
+| Header | Value |
+|---|---|
+| `Content-Type` | `application/json` |
+| `Accept` | `application/json` |
+| `Authorization` | `Bearer <token>` |
 
-**Sending request**
+The token is generated in the Papaya POS administration account.
 
-### HTTP request headers
+### Request Body
 
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-***REQUEST DESCRIPTION***
-
-- header must contain access token generated in Papaya POS administration account
-
-```
-Authorization: Bearer <token>
-```
-
-- body contains data in a form of JSON
-
-```
-{}
-```
-
-> Currently only way to send request is to use Http POST request on correct endpoint with body containing `action` and `data`.
-
-**Request**
-
-All requests must contain `action` and `request`. Currently there are 3 defined actions for get, create or update, and delete.
-
-In case you want to send empty `data`, you need to put in empty json. In case when `data` is missing in request, API will respond with error and request will be ignored.
-
-**Actions**
-
-| action | description |
-| :---   | :---          |
-| GET | Fetch data, may use data in request to narrow results |
-| UPDATE | Create or update with data provided in request |
-| DELETE | Delete objects using data provided in request |
-
-**Example**
-
-You can find examples for each endpoint and action in wiki. This is example of empty `data` with GET `action`.
+Every request body must contain `action` and `data`:
 
 ```json
-
 {
   "action": "GET",
   "data": {}
 }
 ```
 
-Errors from storehouse api, all storehouse errors are from range 4000-4999
+`data` must always be present. If you have no filter parameters, send an empty object `{}`. Requests with a missing `data` field will return an error.
 
-| error  |  Description   |
-| :---        |  :---     |
-| 4000: Default storehouse cannot be deleted | When attempting to delete default storehouse. |
+### Actions
 
-**General Error messages**
+| Action | Description |
+|---|---|
+| `GET` | Fetch data. Use `data` fields to filter results. |
+| `UPDATE` | Create or update using data provided in `data`. |
+| `DELETE` | Delete objects identified by fields in `data`. |
 
-| error  | Description   |
-| :---        |    ----:   |
-| 1: Empty request not allowed | Endpoint received empty request and it does not allow empty requests |
-| 2: Field value required: field_name | Returned when request is missing required field. field_name will be replaced by name of field that was missing |
-| 3: This endpoint or method is not supported | This endpoint does not exist |
-| 4: Action in request is not supported| When you provide wrong *action* in api request |
-| 5: Method is not supported, use POST requests with action defined in body | If you send GET or DELETE requests on endpoint |
-| 6: Bad request, check documentation for the correct form of requests | Request has something missing or is not correct or
+---
+
+## Response Format
+
+All responses follow this structure:
+
+```json
+{
+  "success": true,
+  "data": { ... }
+}
+```
+
+On failure:
+
+```json
+{
+  "success": false,
+  "error": "2: Field value required: itemIds"
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `success` | boolean | `true` if the request was processed successfully |
+| `data` | object | Present only when `success` is `true`. Contains the response payload. |
+| `error` | string | Present only when `success` is `false`. Contains an error code and message. |
+
+---
+
+## Error Codes
+
+### General Errors
+
+| Code | Message | Cause |
+|---|---|---|
+| `1` | Empty request not allowed | Endpoint received empty request |
+| `2` | Field value required: `<field_name>` | A required field is missing from `data` |
+| `3` | This endpoint or method is not supported | Endpoint does not exist |
+| `4` | Action in request is not supported | `action` value is not valid |
+| `5` | Method is not supported, use POST requests with action defined in body | Request used GET or DELETE HTTP method instead of POST |
+| `6` | Bad request, check documentation for the correct form of requests | Request is malformed or missing required structure |
+
+### Storehouse Errors (4000–4999)
+
+| Code | Message | Cause |
+|---|---|---|
+| `4000` | Default storehouse cannot be deleted | Attempted to delete the default inventory |

@@ -1,210 +1,149 @@
-**Endpoint: /api/v1/transaction/accountingEntry**
+# POST /api/v1/transaction/accountingEntry
 
-[GET](#GET)
+Add, fetch, and cancel entries (line items) on a transaction/bill.
 
-[UPDATE](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-[DELETE](#DELETE)
+Sections: [GET](#get) | [UPDATE](#update) | [DELETE](#delete)
 
-### GET
+---
 
-Request gets all bill items
+## GET
 
-* Sending `id` of opened bill to get all items that are on the bill.
+Fetch all entries on a given transaction.
 
-**Request data**
+### Request fields
 
-accounting transaction (bill) `id`, other fields are ignored
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `accountingTransactionId` | string (UUID) | yes | ID of the transaction whose entries to fetch |
 
-| field name              |     type      | Description                         |
-| :---------------------- | :-----------: | :---------------------------------- |
-| accountingTransactionId | STRING (UUID) | id of accounting transaction (bill) |
-
-**Request Example**
-
-For getting all inventories with their items, you can send empty data.
+### Request example
 
 ```json
 {
-  "action":"GET",
+  "action": "GET",
   "data": {
-    "accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea"
+    "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea"
   }
 }
 ```
 
+### Response
 
+`data.accountingEntries` — array of accounting entry objects:
 
-**Response**
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Entry ID |
+| `accountingTransactionId` | string (UUID) | ID of the parent transaction |
+| `accountableItemId` | string (UUID) | ID of the catalog item being sold |
+| `title` | string | Item name as shown on the receipt |
+| `accountingEntryState` | string | Entry state (e.g. `CREATED`, `CANCELED`) |
+| `accountingEntryType` | string | Entry type (e.g. `SALE`, `REFUND`). See [transaction objects](transaction_objects.md). |
+| `count` | number | Number of items (e.g. `2` croissants) |
+| `quantity` | number | Quantity per item in the item's unit (informational) |
+| `unit` | string | Unit of measurement (informational) |
+| `priceAmount` | number | Original unit price |
+| `priceAdjustCoef` | number | Entry-level discount multiplier (1 = no change, 0.8 = 20% off) |
+| `txAdjustCoef` | number | Transaction-level discount multiplier |
+| `adjustedPrice` | number | Final price after applying adjustment coefficients |
+| `priceCurrency` | string | Currency code. See [transaction objects](transaction_objects.md). |
+| `vatRateId` | number | Internal VAT rate ID |
+| `vatRateValue` | number | VAT rate in % |
+| `createTime` | string | Date/time the entry was created |
 
-| field name              |     type      | Description                                                  |
-| :---------------------- | :-----------: | :----------------------------------------------------------- |
-| id                      |     Long      | id of the accounting entry                                   |
-| accountableItemId       | String (UUID) | id of the accounting transaction (bill) on which the entry is |
-| title                   |    String     | title of the acccounting entry                               |
-| accountingEntryState    |    String     | state of the accounting entry (only CREATED)                 |
-| accountingEntryType     |    String     | type of accounting entry (only SALE)                         |
-| accountingTransactionId | String (UUID) | id of accounting transaction (bill)                          |
-| txAdjustCoef            |  BigDecimal   | adjusts price in the case of discount added on Transaction   |
-| adjustedPrice           |  BigDecimal   | adjusted price by adjusting coeficient                       |
-| priceAdjustCoef         |  BigDecimal   | adjusts price in the case of discount added on entry         |
-| priceAmount             |  BigDecimal   | original price of the item                                   |
-| priceCurrency           |    String     | price of the currency                                        |
-| count                   |  BigDecimal   | count of this accounting entry                               |
-| quantity                |  BigDecimal   | quantity of the item in unit in which item is measured (informational) |
-| unit                    |    String     | title for unit in which item is measured (informational)     |
-| createTime              |   Datetime    | date and time in which the entry was created                 |
-| vatRateId               |      int      | Internal Vatrate Id.                                         |
-| vatRateValue            |  BigDecimal   | Value of vatrate in %                                        |
-
-
-
-**Response Example**
+### Response example
 
 ```json
 {
-    "data": {
-        "accountingEntries": [
-            {
-                "accountableItemId": "b6aeb536-5829-41f1-ab86-aba8f69d614b",
-                "accountingEntryState": "CREATED",
-                "accountingEntryType": "SALE",
-                "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
-                "adjustedPrice": 3.5,
-                "count": 1,
-                "createTime": "30.09.2022 17:08:03",
-                "id": "ac67a376-5c51-4b71-a6a9-2425f42bdff1",
-                "priceAdjustCoef": 1,
-                "priceAmount": 20,
-                "priceCurrency": "EUR",
-                "quantity": 0.5,
-                "title": "Kvitnúci čaj",
-                "txAdjustCoef": 1,
-                "unit": "l",
-                "vatRateId": 1,
-                "vatRateValue": 20
-            },
-            {
-                "accountableItemId": "d79e8d9e-c1f4-439b-9e6e-9deb4806a7a6",
-                "accountingEntryState": "CREATED",
-                "accountingEntryType": "SALE",
-                "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
-                "adjustedPrice": 4.0,
-                "count": 1,
-                "createTime": "30.09.2022 17:08:03",
-                "id": "45c87416-1c1f-4d57-9453-cc7afc085f49",
-                "priceAdjustCoef": 1,
-                "priceAmount": 20,
-                "priceCurrency": "EUR",
-                "quantity": 0.5,
-                "title": "Lung Ťing (Dračia studňa)",
-                "txAdjustCoef": 1,
-                "unit": "l",
-                "vatRateId": 1,
-                "vatRateValue": 20
-            },
-            {
-                "accountableItemId": "d7553975-557f-4542-96ad-b67fc9b09b2a",
-                "accountingEntryState": "CREATED",
-                "accountingEntryType": "SALE",
-                "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
-                "adjustedPrice": 3.8,
-                "count": 1,
-                "createTime": "30.09.2022 17:08:03",
-                "id": "58ffec43-b8f0-46e4-b950-e0e1d7a15af5",
-                "priceAdjustCoef": 1,
-                "priceAmount": 20,
-                "priceCurrency": "EUR",
-                "quantity": 0.5,
-                "title": "Zelený čaj s jazmínom",
-                "txAdjustCoef": 1,
-                "unit": "l",
-                "vatRateId": 1,
-                "vatRateValue": 20
-            },
-            {
-                "accountableItemId": "3bbd3e33-d28f-4e0d-97d7-c4b263e135c3",
-                "accountingEntryState": "CREATED",
-                "accountingEntryType": "SALE",
-                "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
-                "adjustedPrice": 3.5,
-                "count": 1,
-                "createTime": "30.09.2022 17:08:04",
-                "id": "84b2090a-7b92-4373-8222-fa7edee69f59",
-                "priceAdjustCoef": 1,
-                "priceAmount": 20,
-                "priceCurrency": "EUR",
-                "quantity": 0.5,
-                "title": "Čaj Tuarégov zelený",
-                "txAdjustCoef": 1,
-                "unit": "l",
-                "vatRateId": 1,
-                "vatRateValue": 20
-            }
-        ]
-    },
-    "success": true
-}
-```
-
-### UPDATE
-
-Request post accountable item on bill. 
-
-* Sending accountable item on the bill (accountingTransactionId).
-
-**Request data**
-
-add these parameters to add accountable item on accounting transaction (bill) `id`
-
-| field name              |     type      | Description                         |
-| :---------------------- | :-----------: | :---------------------------------- |
-| accountingTransactionId | STRING (UUID) | id of accounting transaction (bill) |
-| accountableItemId       | STRING (UUID) | id of accountable Item              |
-| count                   | BigDecimal (Number) | count of items on the bill    |
-| price                   | BigDecimal (Number) | id of accounting transaction (bill) |
-| state                   | STRING (ENUM) | use only String CREATED             |
-| type                    | STRING (ENUM) | use only String SALE                |
-
-**Request Example**
-
-Requets for adding accounting entry on the bill (AccountingTransaction).
-
-```json
-{
-  "action":"UPDATE",
+  "success": true,
   "data": {
-    "accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea",
-    "accountableItemId" : "a7e92c6d-8db5-4753-8613-de50a6b71ttt",
-    "count" : 2,
-    "price" : 2.50,
-    "state" : "CREATED",
-    "type" : "SALE"
+    "accountingEntries": [
+      {
+        "id": "ac67a376-5c51-4b71-a6a9-2425f42bdff1",
+        "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
+        "accountableItemId": "b6aeb536-5829-41f1-ab86-aba8f69d614b",
+        "title": "Green tea",
+        "accountingEntryState": "CREATED",
+        "accountingEntryType": "SALE",
+        "count": 1,
+        "quantity": 0.5,
+        "unit": "l",
+        "priceAmount": 20,
+        "priceAdjustCoef": 1,
+        "txAdjustCoef": 1,
+        "adjustedPrice": 3.5,
+        "priceCurrency": "EUR",
+        "vatRateId": 1,
+        "vatRateValue": 20,
+        "createTime": "30.09.2022 17:08:03"
+      }
+    ]
   }
 }
 ```
 
-### DELETE
+---
 
-Cancel an accounting entry
+## UPDATE
 
-**Request data**
+Add an item to an open transaction.
 
-| field name | type | Description                 |
-| :--------- | :--: | :-------------------------- |
-| id         | UUID | id of entry to be cancelled |
+### Request fields
 
-**Request Example**
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `accountingTransactionId` | string (UUID) | yes | ID of the transaction to add the item to |
+| `accountableItemId` | string (UUID) | yes | ID of the catalog item to add |
+| `count` | number | yes | Number of items to add |
+| `price` | number | yes | Price per item |
+| `state` | string | yes | Must be `CREATED` |
+| `type` | string | yes | Must be `SALE` |
+
+### Request example
+
+```json
+{
+  "action": "UPDATE",
+  "data": {
+    "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
+    "accountableItemId": "a7e92c6d-8db5-4753-8613-de50a6b71ttt",
+    "count": 2,
+    "price": 2.50,
+    "state": "CREATED",
+    "type": "SALE"
+  }
+}
+```
+
+### Response
+
+Returns the created entry in `data.accountingEntries` using the same format as GET.
+
+---
+
+## DELETE
+
+Cancel an accounting entry. The entry is marked as `CANCELED` and is no longer included in the bill total.
+
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | string (UUID) | yes | ID of the entry to cancel |
+
+### Request example
 
 ```json
 {
   "action": "DELETE",
   "data": {
-    "id" : "868d73c9-3b06-4642-a861-1b0d28d0de9d"
+    "id": "868d73c9-3b06-4642-a861-1b0d28d0de9d"
   }
 }
 ```
 
-**Response**
+### Response
 
-Details of canceled entry in the same format as GET
+Returns the cancelled entry in `data.accountingEntries` using the same format as GET.

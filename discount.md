@@ -1,25 +1,34 @@
-**Endpoint: /api/v1/transaction/discount**
+# POST /api/v1/transaction/discount
 
-[UPDATE](#UPDATE)
+Apply a discount (or surcharge) to a single entry or to an entire transaction.
 
-### UPDATE
+**Auth:** `Authorization: Bearer <token>`
 
-For updating the discount ratios.
+Sections: [UPDATE](#update)
 
-| Field Name              | Type       | Description                                                           |
-|-------------------------|------------|-----------------------------------------------------------------------|
-| accountingEntryId       | UUID       | The id of the accounting entry you would like to discount             |
-| accountingTransactionId | UUID       | The id of the transaction you would like to discount                  |
-| discountRate            | BigDecimal | A 0-1 value for discounting a price in the manner of 0.8 = price*0.8  |
+---
 
-**Example**
+## UPDATE
 
->Do not fill both accountingTransaction and accountingEntry ids at once, as the response will only contain the entry.
+Set the discount coefficient for an entry or transaction. A coefficient of `0.8` means the price becomes 80% of the original (20% discount). A value above `1` acts as a surcharge.
 
-Accounting Entry Query
+> Provide either `accountingEntryId` **or** `accountingTransactionId` — not both. If both are provided, only the entry discount is applied.
+
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `accountingEntryId` | string (UUID) | no | ID of the entry to discount |
+| `accountingTransactionId` | string (UUID) | no | ID of the transaction to discount |
+| `discountRate` | number | yes | Discount multiplier. Range 0–1 for a discount (e.g. `0.8` = 20% off). Values above 1 are a surcharge. |
+
+### Request examples
+
+Discount a single entry by 20%:
+
 ```json
 {
-  "action":"UPDATE",
+  "action": "UPDATE",
   "data": {
     "accountingEntryId": "6b2b82c2-3423-4905-966a-d66811e0b88a",
     "discountRate": 0.8
@@ -27,27 +36,26 @@ Accounting Entry Query
 }
 ```
 
-Accounting Transaction Query
+Discount an entire transaction by 20%:
+
 ```json
 {
+  "action": "UPDATE",
   "data": {
-    "discountRate": 0.8,
-    "accountingTransactionId": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d"
-  },
-  "action": "UPDATE"
+    "accountingTransactionId": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d",
+    "discountRate": 0.8
+  }
 }
 ```
-**Response**
 
-| Field Name                    | Type                                        | Description                                        |
-|-------------------------------|---------------------------------------------|----------------------------------------------------|
-| adjustedAccountingEntry       | [EntryModel](transaction_objects.md#)       | An entry model with the price changes applied      |
-| adjustedAccountingTransaction | [TransactionModel](transaction_objects.md#) | A transaction model with the price changes applied |
+### Response
 
+- `data.adjustedAccountingEntry` — returned when an entry was discounted. See [EntryModel](transaction_objects.md).
+- `data.adjustedAccountingTransaction` — returned when a transaction was discounted. See [TransactionModel](transaction_objects.md).
 
-**Example**
+### Response examples
 
-Accounting Entry Response
+Entry discount response:
 
 ```json
 {
@@ -56,25 +64,24 @@ Accounting Entry Response
     "adjustedAccountingEntry": {
       "id": "6b2b82c2-3423-4905-966a-d66811e0b88a",
       "accountingTransactionId": "42d6b8b2-da39-4113-9b84-7d28c466184a",
+      "title": "Croissant plnený šunkou a syrom",
+      "accountingEntryState": "CREATED",
+      "accountingEntryType": "SALE",
       "count": 2,
       "quantity": 1,
       "unit": "ks",
-      "accountingEntryState": "CREATED",
-      "accountingEntryType": "SALE",
       "priceAmount": 2.50,
       "priceAdjustCoef": 0.8,
       "txAdjustCoef": 1,
       "priceCurrency": "EUR",
-      "title": "Croissant plnený šunkou a syrom",
       "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
-      "createTime": "11.10.2022 14:50:17",
-      "seat": 1
+      "createTime": "11.10.2022 14:50:17"
     }
   }
 }
 ```
 
-Accounting Transaction Response
+Transaction discount response:
 
 ```json
 {
@@ -82,11 +89,11 @@ Accounting Transaction Response
   "data": {
     "adjustedAccountingTransaction": {
       "id": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d",
+      "type": "INVOICE",
       "area": {
         "id": 3,
         "numberOfSeats": 0
       },
-      "type": "INVOICE",
       "createTime": "12.10.2022 11:03:30",
       "priceGross": 0,
       "accountingTransactionState": "OPENED",

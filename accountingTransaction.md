@@ -1,184 +1,182 @@
-**Endpoint: /api/v1/transaction/accountingTransaction**
+# POST /api/v1/transaction/accountingTransaction
 
-[Get](#GET)
+Open and cancel accounting transactions (orders/bills). A transaction represents a bill at a table or a standalone invoice.
 
-[UPDATE](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-[DELETE](#DELETE)
+Sections: [GET](#get) | [UPDATE](#update) | [DELETE](#delete)
 
-### GET ###
+---
 
-Get open bills for a table:
+## GET
 
-* Send `id` of area to get list of open accounting transactions.
+Fetch open transactions for a given area (table).
 
-**Request data**
+### Request fields
 
-area `id`, other fields are ignored
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `areaId` | number | yes | ID of the area (table) whose open transactions to fetch |
 
-| field name | type | Description                                     |
-| :--------- | :--: | :---------------------------------------------- |
-| areaId     | Long | id of area (table) from which you get the bills |
-
-**Request Example**
-
-For getting all inventories with their items, you can send empty data.
+### Request example
 
 ```json
 {
   "action": "GET",
   "data": {
-    "areaId" : 2
+    "areaId": 2
   }
 }
 ```
 
-**Response**
+### Response
 
-list of opened accounting transactions that belongs to the area
+`data.accountingTransactions` — array of open transaction objects:
 
-| field name                            |    type    | Description                                                  |
-| :------------------------------------ | :--------: | :----------------------------------------------------------- |
-| accountingTransactionState            |   STRING   | state of the accounting transaction (only OPENED)            |
-| area                                  |   Object   | same object as in area endpoint                              |
-| createTime                            |  Datetime  | date and time in which the bill was created                  |
-| createdByUser                         |    int     | Id of user that created the bill                             |
-| priceGross                            | BigDecimal | gross price of the bill                                      |
-| transactionPriceAdjustmentCoefficient | BigDecimal | adjusts price for every item on the bill (range 0-1 is discount, higher is surcharge) |
-| customerUuid                          |    UUID    | internal UUID of member card                                 |
-| memberCardId                          |   String   | physical card ID (scanned by android app)                    |
-| salePlaceId                           |    UUID    | internal UUID of sale place                                  |
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Unique transaction ID |
+| `humanId` | string | Human-readable transaction number |
+| `accountingTransactionState` | string | Transaction state (always `OPENED` in this response) |
+| `type` | string | Transaction type: `RECEIPT` or `INVOICE` |
+| `area` | object | Area (table) assigned to this transaction |
+| `createTime` | string | Creation date/time |
+| `createdByUserId` | number | ID of the user who created the transaction |
+| `priceGross` | number | Total gross price of all entries on the bill |
+| `transactionPriceAdjustmentCoefficient` | number | Price multiplier applied to all items (1 = no change, 0.8 = 20% discount) |
+| `customerUuid` | string (UUID) | UUID of the associated member card (if any) |
+| `memberCardId` | string | Physical card ID (if any) |
+| `salePlaceId` | string (UUID) | UUID of the sale place |
 
-
-
-**Response Example**
+### Response example
 
 ```json
 {
-    "data": {
-        "accountingTransactions": [
-            {
-                "accountingTransactionState": "OPENED",
-                "area": {
-                    "id": 2,
-                    "numberOfSeats": 0
-                },
-                "createTime": "30.09.2022 17:07:48",
-                "createdByUserId": 1,
-                "id": "78c06986-3a94-4993-8b3b-09bbb73265da",
-                "priceGross": 12.2,
-                "humanId":"100",
-                "transactionPriceAdjustmentCoefficient": 1,
-                "customerUuid": "29cd0081-9e47-4cbf-b124-354f2d01fbec",
-                "memberCardId": "123456",
-                "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
-            },
-            {
-                "accountingTransactionState": "OPENED",
-                "area": {
-                    "id": 2,
-                    "numberOfSeats": 0
-                },
-                "createTime": "30.09.2022 17:07:58",
-                "createdByUserId": 1,
-                "id": "b93045af-3fd5-4bc5-92a4-91f346e1cc5e",
-                "priceGross": 1.3,
-                "humanId":"101",
-                "transactionPriceAdjustmentCoefficient": 1,
-                "customerUuid": "0bee35d7-c993-425d-8de8-716d5fa30c8a",
-                "memberCardId": "341",
-                "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
-            },
-            {
-                "accountingTransactionState": "OPENED",
-                "area": {
-                    "id": 2,
-                    "numberOfSeats": 0
-                },
-                "createTime": "30.09.2022 17:08:01",
-                "createdByUserId": 1,
-                "id": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
-                "priceGross": 14.8,
-                "humanId":"102",
-                "transactionPriceAdjustmentCoefficient": 1,
-                "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
-            }
-        ]
-    },
-    "success": true
+  "success": true,
+  "data": {
+    "accountingTransactions": [
+      {
+        "id": "78c06986-3a94-4993-8b3b-09bbb73265da",
+        "humanId": "100",
+        "accountingTransactionState": "OPENED",
+        "area": {
+          "id": 2,
+          "numberOfSeats": 0
+        },
+        "createTime": "30.09.2022 17:07:48",
+        "createdByUserId": 1,
+        "priceGross": 12.2,
+        "transactionPriceAdjustmentCoefficient": 1,
+        "customerUuid": "29cd0081-9e47-4cbf-b124-354f2d01fbec",
+        "memberCardId": "123456",
+        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+      }
+    ]
+  }
 }
 ```
 
-### UPDATE ###
+---
 
-Open new transaction
+## UPDATE
 
-**Request data**
+Open a new transaction (order/bill).
 
-| Field Name        | Type                   | Description                                                      | Required |
-|-------------------|------------------------|------------------------------------------------------------------|----------|
-| name              | String                 | Name of the transaction                                          | No       |
-| invoiceNumber     | String                 | ID of the invoice                                                | No       |
-| accountingTransactionType | [AccountingTransactionTypeApiEnum](transaction_objects.md#) | Type of transaction | No       |
-| areaId            | Long                   | ID of table                                                      | No       |
-| salePlaceId       | UUID                   | ID of sale place (picks first sale place if not present)         | No       |
-| memberCardId      | String                 | ID of customer card                                              | No       |
-| footer            | String                 | Custom text that will be printed on a receipt                    | No       |
+### Request fields
 
-**Examples**
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `accountingTransactionType` | string | no | Transaction type: `RECEIPT` or `INVOICE`. See [transaction objects](transaction_objects.md). |
+| `areaId` | number | no | ID of the table to associate with this transaction |
+| `salePlaceId` | string (UUID) | no | ID of the sale place. If omitted, the first available sale place is used. |
+| `memberCardId` | string | no | Physical card ID of the customer |
+| `name` | string | no | Custom name for the transaction |
+| `invoiceNumber` | string | no | Invoice number (for `INVOICE` type) |
+| `footer` | string | no | Custom text printed at the bottom of the receipt |
 
-Quickly create a receipt at a table (with only one sale place)
+### Request examples
+
+Quick receipt at a table:
+
 ```json
 {
   "action": "UPDATE",
   "data": {
-    "accountingTransactionType": "RECEIPT"
+    "accountingTransactionType": "RECEIPT",
     "areaId": 9
   }
 }
 ```
 
-Create an invoice at a given sale place with customers card
+Invoice at a specific sale place with a customer card:
+
 ```json
 {
-    "action": "UPDATE",
-    "data": {
-        "accountingTransactionType": "INVOICE",
-        "invoiceNumber": "INV44331",
-        "memberCardId": "12345",
-        "name": "invoice",
-        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
-        "footer" : "Custom text"
-    }
+  "action": "UPDATE",
+  "data": {
+    "accountingTransactionType": "INVOICE",
+    "invoiceNumber": "INV44331",
+    "memberCardId": "12345",
+    "name": "invoice",
+    "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
+    "footer": "Thank you for your visit!"
+  }
 }
 ```
 
-**Response**
+### Response
 
-Details of opened transaction using the same format as GET
+Returns the created transaction in `data.accountingTransactions` using the same format as GET.
 
-### DELETE ###
+### Response example
 
-Cancel a transaction (also cancels all entries in the transaction)
+```json
+{
+  "success": true,
+  "data": {
+    "accountingTransactions": [
+      {
+        "id": "b93045af-3fd5-4bc5-92a4-91f346e1cc5e",
+        "humanId": "103",
+        "accountingTransactionState": "OPENED",
+        "area": {
+          "id": 9,
+          "numberOfSeats": 4
+        },
+        "createTime": "30.09.2022 17:10:00",
+        "createdByUserId": 1,
+        "priceGross": 0,
+        "transactionPriceAdjustmentCoefficient": 1,
+        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+      }
+    ]
+  }
+}
+```
 
-**Request data**
+---
 
+## DELETE
 
-| field name | type | Description                       |
-| :--------- | :--: | :-------------------------------- |
-| id         | UUID | id of transaction to be cancelled |
+Cancel a transaction. Cancelling a transaction also cancels all entries on it.
 
-**Request Example**
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | string (UUID) | yes | ID of the transaction to cancel |
+
+### Request example
 
 ```json
 {
   "action": "DELETE",
   "data": {
-    "id" : "d703ca6d-c57d-408a-a449-36bdfd44a0eb"
+    "id": "d703ca6d-c57d-408a-a449-36bdfd44a0eb"
   }
 }
 ```
 
-**Response**
+### Response
 
-Details of canceled transaction in the same format as GET/UPDATE
+Returns the cancelled transaction in `data.accountingTransactions` using the same format as GET.
