@@ -1,21 +1,25 @@
-**Endpoint: /api/v1/transaction/accountingEntry/date**
+# POST /api/v1/transaction/accountingEntry/date
 
-[Get](#GET)
+Fetch accounting entries (sold items) within a date range. Useful for sales reporting and export.
 
-### Get
+**Auth:** `Authorization: Bearer <token>`
 
-Request gets all items from a date range
+Sections: [GET](#get)
 
-* Sending `fromDate` and `toDate` to get all items from that date range.
+---
 
-**Request data**
+## GET
 
-| field name              |     type      | Description                         |
-| :---------------------- | :-----------: | :---------------------------------- |
-| fromDate | Long | UNIX timestamp in miliseconds |
-| toDate | Long | UNIX timestamp in miliseconds |
+Fetch all accounting entries created between two timestamps.
 
-**Request Example**
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `fromDate` | number | yes | Start of range as a UNIX timestamp in milliseconds |
+| `toDate` | number | yes | End of range as a UNIX timestamp in milliseconds |
+
+### Request example
 
 ```json
 {
@@ -27,51 +31,76 @@ Request gets all items from a date range
 }
 ```
 
+### Response
 
+`data` — array of entry report objects (not wrapped in a named key):
 
-**Response**
+| Field | Type | Description |
+|---|---|---|
+| `id` | string (UUID) | Entry ID |
+| `txUuid` | string (UUID) | ID of the parent transaction |
+| `menuId` | string (UUID) | ID of the menu/catalog item |
+| `menuTitle` | string | Name of the menu category |
+| `title` | string | Name of the item as shown on the receipt |
+| `plu` | string | PLU code of the item |
+| `count` | number | Number of items sold |
+| `basePrice` | number | Base unit price |
+| `unitPrice` | number | Price per unit (after any modifiers) |
+| `priceAdjustCoef` | number | Price adjustment coefficient (1 = no change) |
+| `totalPrice` | number | Total price excluding VAT |
+| `totalWithVat` | number | Total price including VAT and adjustments |
+| `vatRate` | number | VAT rate in % |
+| `type` | string | Entry type: `SALE`, `REFUND`, or `VOUCHER` |
+| `createDate` | number | Creation time as UNIX timestamp in milliseconds |
+| `user` | string | Name of the user who created the entry |
+| `salePlaceName` | string | Name of the sale place |
+| `revenueCenterName` | string | Name of the revenue center |
+| `note` | string | Entry note |
 
-| field name              |     type      | Description                                                  |
-| :---------------------- | :-----------: | :----------------------------------------------------------- |
-| menuId | String (UUID) | id of menu of the entry |
-| txUuid | String (UUID) | id of the transaction |
-| createDate | Long | unix timestamp (in milliseconds) of entry creation |
-| id | String (UUID) | id of the entry |
-| title | String | title of the entry |
-| plu | String | PLU code of the entry |
-| menuTitle | String | title of the menu of the entry |
-| count | BigDecimal | count of the entry |
-| basePrice | BigDecimal | base price of the entry|
-| unitPrice | BigDecimal | price per unit |
-| priceAdjustCoef | BigDecimal | price adjustment coefficient |
-| totalPrice | BigDecimal | total price without vat |
-| totalWithVat | BigDecimal | total price (including adjustment and count) |
-| vatRate | BigDecimal | vat rate in % |
-| type | String | entry type (SALE, REFUND, VOUCHER) |
-| user | String | name of user who created the entry |
-| revenueCenterName | String | name of revenue center |
-| note | String | entry note |
-| salePlaceName | String | name of sale place |
+### Code examples
 
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/transaction/accountingEntry/date \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"fromDate":1713873874129,"toDate":1713873934000}'
+```
 
+Kotlin:
+```kotlin
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "fromDate": 1713873874129,
+            "toDate": 1713873934000
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingEntry/date")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+```
 
-
-
-**Response Example**
+### Response example
 
 ```json
 {
   "success": true,
   "data": [
     {
-      "menuId": "00000000-0000-0000-0000-000000000007",
-      "txUuid": "82046ac6-69ef-46f1-8616-8bf832c8a146",
-      "createDate": 1713873874129,
       "id": "f9c7ecca-552a-4f27-8fec-d78beaa34285",
-      "title": "Zlatý bažant radler - citrón",
+      "txUuid": "82046ac6-69ef-46f1-8616-8bf832c8a146",
+      "menuId": "00000000-0000-0000-0000-000000000007",
+      "menuTitle": "Beer",
+      "title": "Zlatý bažant radler - lemon",
       "plu": "0719",
-      "menuTitle": "Pivo",
       "count": 1,
       "basePrice": 1.40,
       "unitPrice": 1.40,
@@ -80,10 +109,10 @@ Request gets all items from a date range
       "totalWithVat": 1.40,
       "vatRate": 20,
       "type": "SALE",
-      "user": "Administrátor ",
-      "salePlaceName": "Pokladňa"
+      "createDate": 1713873874129,
+      "user": "Administrator",
+      "salePlaceName": "Main Register"
     }
   ]
 }
 ```
-

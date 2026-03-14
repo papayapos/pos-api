@@ -1,104 +1,168 @@
-**Endpoint: /api/v1/transaction/payment**
+# POST /api/v1/transaction/payment
 
-[UPDATE](#UPDATE)
+Close a transaction by submitting the entries to be paid and the payment method(s) covering them.
 
-### UPDATE
+**Auth:** `Authorization: Bearer <token>`
 
-For updating payment status, contents, and distribution.
+Sections: [UPDATE](#update)
 
-**Request data**
+---
 
-| Field Name        | Type                               | Description                                                                        | Required |
-|-------------------|------------------------------------|------------------------------------------------------------------------------------|----------|
-| transactionId     | UUID                               | Unique ID of the Transaction that the payment is going to be created for           | Yes      |
-| accountingEntries | List\<[EntryModel](transaction_objects.md#)>    | The entries that will compose the contents of the payment                          | Yes      |
-| payments          | List\<[TransactionPaymentModel](transaction_objects.md#)> | The series of payments which as a whole will cover the bill created by the entries | Yes      |
-| invoiceId         | String                             | The id printed on the invoice                                                      | No       |
+## UPDATE
 
-**Example**
+Pay for a transaction. Provide the entries that make up the bill and the payments that cover it. The sum of `payments[].amount` should equal the total of the provided entries.
 
-Card payment with the API
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `transactionId` | string (UUID) | yes | ID of the transaction to pay |
+| `accountingEntries` | object[] | yes | Entries (line items) that form the bill. Use the entry objects from [GET /accountingEntry](accountingEntry.md). |
+| `payments` | object[] | yes | One or more payments covering the total. See [TransactionPaymentModel](transaction_objects.md). |
+| `invoiceId` | string | no | Invoice number to print on the invoice |
+
+**Payment object:**
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `paymentType` | string | yes | Payment method. See [PaymentTypeApiEnum](transaction_objects.md). |
+| `amount` | number | yes | Amount to pay with this payment method |
+| `cardData` | object | no | Card terminal data. Required for `CARD` payments. See [CardDataModel](transaction_objects.md). |
+
+### Request examples
+
+Cash payment:
+
 ```json
 {
   "action": "UPDATE",
   "data": {
+    "transactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
     "accountingEntries": [
       {
-        "priceAdjustCoef": 1,
-        "quantity": 1,
-        "accountingEntryState": "CREATED",
-        "count": 12,
-        "txAdjustCoef": 1,
-        "title": "Croissant plnený šunkou a syrom",
-        "accountingTransactionId": "dcfb7004-9649-4d92-bab1-261062993381",
-        "seat": 1,
-        "unit": "ks",
-        "priceCurrency": "EUR",
+        "id": "8673a8ad-c4ae-40e8-ba44-c402298cab03",
+        "accountingTransactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
         "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
-        "createTime": "11.10.2022 11:58:46",
-        "id": "7e74dbf6-df47-4858-830a-a0d5be1f09a0",
+        "accountingEntryState": "CREATED",
+        "accountingEntryType": "SALE",
+        "title": "Croissant plnený šunkou a syrom",
+        "count": 12,
+        "quantity": 1,
+        "unit": "ks",
         "priceAmount": 2.5,
-        "accountingEntryType": "SALE"
+        "priceAdjustCoef": 1,
+        "txAdjustCoef": 1,
+        "priceCurrency": "EUR",
+        "createTime": "11.10.2022 12:25:40"
       }
     ],
     "payments": [
       {
+        "paymentType": "CASH",
+        "amount": 30
+      }
+    ]
+  }
+}
+```
+
+Card payment:
+
+```json
+{
+  "action": "UPDATE",
+  "data": {
+    "transactionId": "dcfb7004-9649-4d92-bab1-261062993381",
+    "accountingEntries": [
+      {
+        "id": "7e74dbf6-df47-4858-830a-a0d5be1f09a0",
+        "accountingTransactionId": "dcfb7004-9649-4d92-bab1-261062993381",
+        "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
+        "accountingEntryState": "CREATED",
+        "accountingEntryType": "SALE",
+        "title": "Croissant plnený šunkou a syrom",
+        "count": 12,
+        "quantity": 1,
+        "unit": "ks",
+        "priceAmount": 2.5,
+        "priceAdjustCoef": 1,
+        "txAdjustCoef": 1,
+        "priceCurrency": "EUR",
+        "createTime": "11.10.2022 11:58:46"
+      }
+    ],
+    "payments": [
+      {
+        "paymentType": "CARD",
+        "amount": 30,
         "cardData": {
           "transactionId": "dcfb7004-9649-4d92-bab1-261062993381"
-        },
-        "amount": 30,
-        "paymentType": "CARD"
+        }
       }
-    ],
-    "transactionId": "dcfb7004-9649-4d92-bab1-261062993381"
-  }
-}
-```
-Cash payment with API
-
-```json
-{
-  "action": "UPDATE",
-  "data": {
-    "accountingEntries": [
-      {
-        "priceAdjustCoef": 1,
-        "quantity": 1,
-        "accountingEntryState": "CREATED",
-        "count": 12,
-        "txAdjustCoef": 1,
-        "title": "Croissant plnený šunkou a syrom",
-        "accountingTransactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
-        "seat": 1,
-        "unit": "ks",
-        "priceCurrency": "EUR",
-        "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
-        "createTime": "11.10.2022 12:25:40",
-        "id": "8673a8ad-c4ae-40e8-ba44-c402298cab03",
-        "priceAmount": 2.5,
-        "accountingEntryType": "SALE"
-      }
-    ],
-    "payments": [
-      {
-        "amount": 30,
-        "paymentType": "CASH"
-      }
-    ],
-    "transactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30"
+    ]
   }
 }
 ```
 
-**Response**
+### Response
 
-| Field Name     | Type                                                                      | Description                                                                     |
-|----------------|---------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| newTransaction | List\<[TransactionModel](transaction_objects.md#)>        | A list of transaction data provided proportionally to the received entry models |
-| payments       | List\<[TransactionPaymentModel](transaction_objects.md#)> | A list of payment data provided proportionally to the received payment models   |
+`data.newTransaction` — the closed/updated transaction object. See [TransactionModel](transaction_objects.md).
 
-**Example**
-Cash response
+`data.payments` — array of payment records. See [TransactionPaymentModel](transaction_objects.md).
+
+### Code examples
+
+HTTPie — cash payment:
+```bash
+http POST $BASE_URL/api/v1/transaction/payment \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"transactionId":"3d25d1e3-1da3-41cc-a373-129d7af28d30","accountingEntries":[{"id":"8673a8ad-c4ae-40e8-ba44-c402298cab03","accountingTransactionId":"3d25d1e3-1da3-41cc-a373-129d7af28d30","accountableItemId":"cbceb73a-25e7-4b83-a15d-c3cef5ef5f32","accountingEntryState":"CREATED","accountingEntryType":"SALE","title":"Croissant","count":12,"quantity":1,"unit":"ks","priceAmount":2.5,"priceAdjustCoef":1,"txAdjustCoef":1,"priceCurrency":"EUR","createTime":"11.10.2022 12:25:40"}],"payments":[{"paymentType":"CASH","amount":30}]}'
+```
+
+Kotlin — cash payment:
+```kotlin
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "transactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
+            "accountingEntries": [{
+                "id": "8673a8ad-c4ae-40e8-ba44-c402298cab03",
+                "accountingTransactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
+                "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
+                "accountingEntryState": "CREATED",
+                "accountingEntryType": "SALE",
+                "title": "Croissant",
+                "count": 12,
+                "quantity": 1,
+                "unit": "ks",
+                "priceAmount": 2.5,
+                "priceAdjustCoef": 1,
+                "txAdjustCoef": 1,
+                "priceCurrency": "EUR",
+                "createTime": "11.10.2022 12:25:40"
+            }],
+            "payments": [{
+                "paymentType": "CASH",
+                "amount": 30
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/payment")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+```
+
+### Response examples
+
+Cash payment response:
 
 ```json
 {
@@ -123,7 +187,8 @@ Cash response
   }
 }
 ```
-Card response
+
+Card payment response:
 
 ```json
 {
@@ -148,6 +213,3 @@ Card response
   }
 }
 ```
-
-
-

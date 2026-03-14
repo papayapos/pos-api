@@ -1,23 +1,26 @@
-**Endpoint: /api/v1/salePlace**
+# POST /api/v1/salePlace
 
-[Get](#GET)
+Read sale places (cashier/register positions).
 
-### GET ###
+**Auth:** `Authorization: Bearer <token>`
 
-Returns a specific sale place, or a list of all sale places.
+Sections: [GET](#get)
 
-* Sending empty returns a list of all sale places
-* Request with `uuid` set returns only that one sale place
+---
 
-**Request data**
+## GET
 
-| field name              |     type      | Description                         |
-| :---------------------- | :-----------: | :---------------------------------- |
-| uuid      | String (UUID)| Optional UUID of sale place |
+Fetch all sale places or a single one by UUID.
 
-**Request Examples**
+### Request fields
 
-Get all sale places
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `uuid` | string (UUID) | no | UUID of the sale place to fetch. Omit to get all sale places. |
+
+### Request examples
+
+All sale places:
 
 ```json
 {
@@ -26,7 +29,7 @@ Get all sale places
 }
 ```
 
-Get one sale place
+Single sale place:
 
 ```json
 {
@@ -37,20 +40,16 @@ Get one sale place
 }
 ```
 
-**Response**
+### Response
 
-| field name              |     type      | Description                                                  |
-| :---------------------- | :-----------: | :----------------------------------------------------------- |
-| salePlaces | SalePlace[] | List of sale places
+`data.salePlaces` — array of sale place objects:
 
- #### Sale Place ####
+| Field | Type | Description |
+|---|---|---|
+| `uuid` | string (UUID) | UUID of the sale place |
+| `name` | string | Name of the sale place |
 
-| Field Name | Type         | Description                                                        |
-|------------|--------------|--------------------------------------------------------------------|
-| uuid       | String (UUID)| UUID of sale place |
-| name  | String       | name of sale place |
-
-**Response Example**
+### Response example
 
 ```json
 {
@@ -58,11 +57,65 @@ Get one sale place
   "data": {
     "salePlaces": [
       {
-        "name": "Sale place",
-        "uuid": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        "uuid": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
+        "name": "Sale place"
       }
     ]
   }
 }
+```
 
+### Code examples
+
+HTTPie — get all sale places:
+```bash
+http POST $BASE_URL/api/v1/salePlace \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+HTTPie — get one sale place:
+```bash
+http POST $BASE_URL/api/v1/salePlace \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"uuid":"a25805ba-dd76-4c08-8188-5e64bc2e1645"}'
+```
+
+Kotlin:
+```kotlin
+// Get all sale places
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/salePlace")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+
+// Get one sale place
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "uuid": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/salePlace")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```

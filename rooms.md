@@ -1,81 +1,121 @@
-**Endpoint: /api/v1/areas/rooms**
+# POST /api/v1/areas/rooms
 
-[Get](#GET)
+CRUD operations for rooms (sectors, zones, etc.). Areas (tables) belong to rooms.
 
-[UPDATE](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-### GET ###
+Sections: [GET](#get) | [UPDATE](#update)
 
-For getting ids of all rooms
+---
 
-* Send list of `id` to show only those rooms.
+## GET
 
-**Request data**
+Fetch all rooms or a filtered subset by ID.
 
-Send just empty ids list to get all rooms. Or send ids to get particular set of areas.
+### Request fields
 
-| field name |    type     | Description                             |
-| :--------- | :---------: | :-------------------------------------- |
-| ids        | Array[Long] | ids of rooms to get data about |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `ids` | `number[]` | no | IDs of rooms to fetch. Omit or send empty array to get all rooms. |
 
-**Request Example**
+### Request examples
 
-For getting all rooms, you can send empty data.
+All rooms:
+
+```json
+{
+  "action": "GET",
+  "data": {}
+}
+```
+
+Specific rooms by ID:
 
 ```json
 {
   "action": "GET",
   "data": {
-    "ids": []
+    "ids": [1, 2]
   }
 }
 ```
 
-**Response**
+### Response
 
-| field name    |  type  | Description                       |
-| :------------ | :----: | :-------------------------------- |
-| id            |  Long  | id of the area (table)            |
-| name          | String | name of the area                  |
+`data.rooms` — array of room objects:
 
-**Response Example**
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | ID of the room |
+| `name` | string | Name of the room |
+
+### Response example
 
 ```json
 {
-    "data": {
-        "areas": [
-            {
-                "id": 1,
-                "name": "Bar"
-            },
-            {
-                "id": 2,
-                "name": "Terrace"
-            },
-        ]
-    },
-    "success": true
+  "success": true,
+  "data": {
+    "rooms": [
+      {
+        "id": 1,
+        "name": "Bar"
+      },
+      {
+        "id": 2,
+        "name": "Terrace"
+      }
+    ]
+  }
 }
 ```
 
-### UPDATE ###
+### Code examples
 
-Create or update a room
+HTTPie — get all rooms:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
 
-* requests with `id` update an existing room
-* request without `id` creates a new room
+Kotlin:
+```kotlin
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
-**Request data**
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+```
 
+---
 
-| field name |    type     | Description                             |
-| :--------- | :---------: | :-------------------------------------- |
-| id         | Long        | id of room to update                   |
-| name       | String      | name of room |
+## UPDATE
 
-**Request Example**
+Create or update a room.
 
-Create new room
+- Request **without** `id` → creates a new room.
+- Request **with** `id` → updates the existing room.
+
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | ID of the room to update. Omit to create a new room. |
+| `name` | string | no | Name of the room |
+
+### Request examples
+
+Create a new room:
 
 ```json
 {
@@ -86,15 +126,92 @@ Create new room
 }
 ```
 
-Update existing room
+Update an existing room:
 
 ```json
 {
   "action": "UPDATE",
   "data": {
-    "id": 2
-    "name": "rename room"
+    "id": 2,
+    "name": "renamed room"
   }
 }
 ```
 
+### Response
+
+Returns the created or updated room object in `data.rooms`.
+
+### Response example
+
+```json
+{
+  "success": true,
+  "data": {
+    "rooms": [
+      {
+        "id": 2,
+        "name": "renamed room"
+      }
+    ]
+  }
+}
+```
+
+### Code examples
+
+HTTPie — create room:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"name":"new room"}'
+```
+
+HTTPie — update room:
+```bash
+http POST $BASE_URL/api/v1/areas/rooms \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"id":2,"name":"renamed room"}'
+```
+
+Kotlin:
+```kotlin
+// Create room
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "name": "new room"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+
+// Update room
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "id": 2,
+            "name": "renamed room"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
+```

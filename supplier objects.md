@@ -1,18 +1,26 @@
-supplier - suppliers are informative and are not used for anything besides displaying information about supplier in reports
+# Supplier Object Reference
 
-| field name  | type        | Description   |
-| :---        |    :----:   | :---          |
-| id | number | long, unique id of supplier |
-| name | string | name |
-| address| string | address|
-| city | string | city|
-| country | string | country |
-| ico | string | ico |
-| dic | string | dic  |
-| icDph | string | icdph |
-| contactPerson | string | name of someone responsible |
-| phone | string | phone | 
-| email | string | email | 
-| registration| string | registration |
-| registrationNumber | string | registration number |
-| registrationDate | string | registration date |
+Supplier objects are used in both the [supplier](supplier.md) endpoint and embedded in [stock change cards](card.md).
+
+> Suppliers are informational only — they are not used in any calculations, only displayed in reports and on cards.
+
+---
+
+## Supplier
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | Unique supplier ID |
+| `name` | string | Supplier name |
+| `address` | string | Street address |
+| `city` | string | City |
+| `country` | string | Country |
+| `contactPerson` | string | Name of the contact person |
+| `phone` | string | Phone number |
+| `email` | string | Email address |
+| `ico` | string | Company registration number (IČO) |
+| `dic` | string | Tax ID (DIČ) |
+| `icDph` | string | VAT registration number (IČ DPH) |
+| `registration` | boolean | Whether the supplier is registered |
+| `registrationNumber` | string | Registration number |
+| `registrationDate` | string | Registration date |

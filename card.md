@@ -1,50 +1,44 @@
-**Endpoint: /api/v1/inventory/card**
+# POST /api/v1/inventory/card
 
-[Get](#GET)
+CRUD operations for stock change cards. Cards record the movement of items in and out of inventories, including supplier details, document type, prices, and more. Each card contains one or more card items describing the actual stock changes.
 
-[Create or Update](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-[Delete](#DELETE)
+Sections: [GET](#get) | [UPDATE](#update) | [DELETE](#delete)
 
-Cards are used to record movement of items in inventories. Allowing user to record detailed information about supplier, type of movement, item, prices and more. Each card contains array of items that describe changes to [stock items](item.md).
+---
 
-### Get
+## GET
 
-For getting cards you have following options.
+Fetch stock change cards by IDs or by date range.
 
-* Sending `ids` of cards you want to retrieve.
-* Sending date range `from` and `to` to get all cards that were created between dates, additional options are available to date range.
-    * Optional `inventoryId`, API will only return cards for inventory.
-    * Optional `documentType`, API will only return cards of provided document type.
-    * Optional `supplierName`, API will only return cards from supplier. 
+- Option 1: provide `ids` to get specific cards.
+- Option 2: provide `from` (and optionally `to`) for a date range, with optional filters.
+- `ids` and `from`/`to` cannot be combined. If both are present, `ids` takes priority.
+- There is no "get all" option — the number of cards grows unboundedly over time.
+- Non-existent IDs are silently ignored.
 
-> Note that there is no option to retrieve everything. This limitation is due to fact that number of cards grow over time ad infinitum. Over time would responses to such requests grow to unreasonable sizes.
->
-> If you request ids that are not in database they will be ignored and only found cards will be returned.
->
-> `ids` and `from`/`to` range cannot be combined in single request, if both options are provided `ids` will take priority and data range will be ignored.
+### Request fields
 
-**Request data**
+**Option 1 — by IDs:**
 
-Option 1: `ids`, other fields are ignored
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `ids` | `number[]` | yes | IDs of cards to fetch |
 
-| field name |       type       | Description                               |
-| :--------- | :--------------: | :---------------------------------------- |
-| ids        | array of numbers | long, id of stock taking card in database |
+**Option 2 — by date range:**
 
-Option 2: `from`, `to` range and optional parameters
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `from` | string | yes | Start of date range. Format: `dd.MM.yyyy HH:mm:ss` |
+| `to` | string | no | End of date range. Format: `dd.MM.yyyy HH:mm:ss` |
+| `inventoryId` | number | no | Filter to cards from this inventory only |
+| `documentType` | number | no | Filter by document type: `1` = fiscal receipt, `2` = invoice, `3` = other |
+| `supplierName` | string | no | Filter by supplier name |
 
-| field name   |  type  | Description                                                |
-| :----------- | :----: | :--------------------------------------------------------- |
-| from         | string | start of interval that is to be retrieved                  |
-| to           | string | optional, end of interval that is to be retrieved          |
-| inventoryId  | number | long, optional                                             |
-| documentType | number | long, optional, 1 = fiscal receipt, 2 = invoice, 3 = other |
-| supplierName | string | optional, name of supplier                                 |
+### Request examples
 
-**Request Example**
-
-For getting cards by `ids`:
+By IDs:
 
 ```json
 {
@@ -55,7 +49,7 @@ For getting cards by `ids`:
 }
 ```
 
-For getting cards that are between `from` and `to`:
+By date range:
 
 ```json
 {
@@ -67,7 +61,7 @@ For getting cards that are between `from` and `to`:
 }
 ```
 
-For getting cards that are between `from` and `to`, with additional parameters:
+By date range with filters:
 
 ```json
 {
@@ -82,105 +76,178 @@ For getting cards that are between `from` and `to`, with additional parameters:
 }
 ```
 
-**Response**
+### Response
 
-Response contains array of card objects. For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
+`data.cards` — array of stock change card objects. See [storehouse objects](storehouse%20objects.md) for full field definitions.
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+### Code examples
 
-Contents of data for this response:
+HTTPie — get by IDs:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"ids":[1,2,3]}'
+```
 
-| field name |         type          | Description                                                  |
-| :--------- | :-------------------: | :----------------------------------------------------------- |
-| cards      | array of card objects | List of requested cards. If no cards were found this field will contain empty array. |
+HTTPie — get by date range:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"from":"01.01.2024 00:00:00","to":"31.01.2024 23:59:59"}'
+```
 
-**Response Example**
+Kotlin:
+```kotlin
+// Get by IDs
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "ids": [1, 2, 3]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+
+// Get by date range
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "from": "01.01.2024 00:00:00",
+            "to": "31.01.2024 23:59:59"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
+```
+
+### Response example
 
 ```json
 {
-    "data": {
-        "cards": [
-            {
-                "id": 1,
-                "createTime": "11.03.2021 11:04:30",
-                "documentType": 1,
-                "placedTime": "11.03.2021 11:04:29",
-                "inventoryId": 1,
-                "supplier": {
-                    "id": 1,
-                    "address": "Street no. 1",
-                    "city": "Bratislava",
-                    "contactPerson": "Julia",
-                    "country": "Slovakia",
-                    "email": "abc@cde.efg",
-                    "icDph": "12345",
-                    "ico": "44444444",
-                    "name": "Silvia",
-                    "phone": "1234567890",
-                    "registration": true,
-                    "registrationDate": "12.05.2022 00:00:00",
-                    "registrationNumber": "55"
-                },
-                "items": [
-                    {
-                        "id": 1,
-                        "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"
-                        "stockItemTitle": "Apple",
-                        "measuringUnit": "piece",
-                        "amount": 10,
-                        "priceNet": 2,
-                        "vatRate": 20
-                    }
-                ]
-            }
-            
+  "success": true,
+  "data": {
+    "cards": [
+      {
+        "id": 1,
+        "inventoryId": 1,
+        "createTime": "11.03.2021 11:04:30",
+        "placedTime": "11.03.2021 11:04:29",
+        "type": "RECEIPT_CARD",
+        "documentType": 1,
+        "supplier": {
+          "id": 1,
+          "name": "Silvia",
+          "address": "Street no. 1",
+          "city": "Bratislava",
+          "country": "Slovakia",
+          "contactPerson": "Julia",
+          "email": "abc@cde.efg",
+          "phone": "1234567890",
+          "ico": "44444444",
+          "icDph": "12345",
+          "registration": true,
+          "registrationDate": "12.05.2022 00:00:00",
+          "registrationNumber": "55"
+        },
+        "items": [
+          {
+            "id": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "stockItemTitle": "Apple",
+            "measuringUnit": "piece",
+            "amount": 10,
+            "priceNet": 2,
+            "vatRate": 20
+          }
         ]
-    },
-    "success": true
+      }
+    ]
+  }
 }
-
 ```
 
-### Update
+---
 
-There are multiple ways to create or update cards. We will first cover cards and after that supplier and finally card items. While they must be created or updated in same request as card they belong to, there are important things to note about them.
+## UPDATE
 
-For cards these are options for creating and updating:
+Create or update stock change cards.
 
-* Sending request **without** `id`, API will create new card and generate `id` for it.
-* Sending request **with** `id`.
-    * `id` does not exists, API will create new card and use `id` provided in request.
-    * `id` already exists, API will update existing card.
+**Card creation/update rules:**
+- Card **without** `id` → created with a generated ID.
+- Card **with** `id`:
+  - ID does not exist → created using the provided ID.
+  - ID exists → updated.
 
-For supplier this applies:
+**Supplier rules:**
+- Supplier **with** `id` → loads stored supplier data. Any additional fields provided override only the stored data for this card (the stored supplier record is not changed).
+- Supplier **without** `id` → provided data is stored directly in the card only. This does not create a new supplier record.
 
-* Providing supplier **with** `id` will use stored data. If you provide additional supplier data apart from `id`, then they will be used instead of stored supplier data. For fields not provided in request, API will use data from stored object. Only supplier data in this card will be altered. Original stored supplier object nor any other card will not change.
-* Providing supplier **without** `id. Provided data will be stored in card. No default data will be fetched as `id` is not provided. This will not create new supplier and if you want to create new supplier you should do so in [supplier](https://bitbucket.org/papayapos/papayapos/wiki/Supplier) endpoint.
+**Card item rules:**
+- When creating a new card, item `id`s are ignored — new IDs are always generated.
+- When updating an existing card:
+  - Item `id` exists and belongs to this card → item is overwritten.
+  - Item `id` exists but belongs to a different card → a new ID is generated (items cannot be moved between cards).
+- All previous card items are replaced on update. You can safely omit item `id`s and let the API manage them.
 
-And finally these are options and conditions for card items:
+> If you need to store `id`s of created card items, capture them from the response — they are not predictable.
 
-* When creating new card, card item `id` will be ignored, API will generate new `id` that will be returned in response. This is to prevent items from sharing cards as well as accidental 'stealing' of items between cards.
-* When updating existing card.
-    * If card item with provided `id` exists **and** belongs to **updated** card. Then item will be overwritten with item from request.
-    * If card item with provided `id` exists **but** belongs to **other** card. Then provided `id` will be ignored, API will generate new `id` and create new card item for updated card. This is to prevent accidental 'stealing of items between cards.
+### Request fields
 
-API always deletes or overwrites previous card items. Because of this it is viable approach to never provide item `id`s and let API handle them. 
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `cards` | object[] | yes | Stock change cards to create or update |
 
-**Request data**
+**Card object:**
 
-| field name |                type                | Description                         |
-| :--------- | :--------------------------------: | :---------------------------------- |
-| cards      | array of stock change card objects | Stock change cards with their items |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | Card ID. Omit to auto-generate. |
+| `inventoryId` | number | yes | ID of the inventory this card belongs to |
+| `createTime` | string | yes | Creation time. Format: `dd.MM.yyyy HH:mm:ss` |
+| `placedTime` | string | yes | Placement time (use same value as `createTime` for now). Format: `dd.MM.yyyy HH:mm:ss` |
+| `type` | string | yes | Card type: `RECEIPT_CARD` (goods added) or `ISSUE_CARD` (goods removed) |
+| `documentType` | number | no | `1` = fiscal receipt, `2` = invoice, `3` = other |
+| `documentId` | string | no | ID of an associated document (e.g. accounting transaction ID) |
+| `supplier` | object | no | Supplier information. See [supplier objects](supplier%20objects.md). |
+| `orderNumber` | string | no | Order number |
+| `deliveryNote` | string | no | Delivery note reference |
+| `note` | string | no | Free-text note |
+| `items` | object[] | yes | Stock items being received or issued |
 
-**Request Example**
+**Card item object:**
 
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | Item ID. Ignored when creating a card; managed by API during updates. |
+| `stockItemId` | string (UUID) | yes | ID of the existing stock item (from [/inventory/item](item.md)) |
+| `stockItemTitle` | string | no | Name of the item (for display purposes) |
+| `amount` | number | yes | Amount added or removed |
+| `measuringUnit` | string | yes | Unit of measurement |
+| `priceNet` | number | no | Net price per unit |
+| `vatRate` | number | no | VAT rate in % |
+
+### Request example
 
 ```json
-{ 
+{
   "action": "UPDATE",
   "data": {
     "cards": [
@@ -190,66 +257,94 @@ API always deletes or overwrites previous card items. Because of this it is viab
         "createTime": "17.02.2022 14:04:03",
         "placedTime": "17.02.2022 14:04:03",
         "type": "RECEIPT_CARD",
-        "documentId": "1234",
         "documentType": 1,
+        "documentId": "1234",
         "supplier": {
           "id": 1,
+          "name": "Silvia",
           "address": "Street no. 1",
           "city": "Bratislava",
-          "contactPerson": "Julia",
           "country": "Slovakia",
-          "mail": "abc@cde.efg",
-          "icDph": "12345",
-          "ico": "44444444",
-          "name": "Silvia",
+          "contactPerson": "Julia",
+          "email": "abc@cde.efg",
           "phone": "1234567890",
+          "ico": "44444444",
+          "icDph": "12345",
           "registration": true,
           "registrationDate": "12.05.2022 00:00:00",
           "registrationNumber": "55"
         },
         "orderNumber": "12",
-        "deliveryNote": "delivery number (number of delivery confirmation document)",
-        "note": "Note",
+        "deliveryNote": "DN-0042",
+        "note": "Received in good condition",
         "items": [
           {
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "stockItemTitle": "Apple",
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f", #this ID must be ID of already existing ITEM,
-            "stockItemTitle": "Apple",
             "vatRate": 20
           }
         ]
       }
-      ]
+    ]
   }
 }
 ```
 
+### Code examples
 
-**Response**
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"cards":[{"inventoryId":1,"createTime":"17.02.2022 14:04:03","placedTime":"17.02.2022 14:04:03","type":"RECEIPT_CARD","items":[{"stockItemId":"27fd9916-d6ee-43d7-a3a4-0946f41b3c0f","amount":100,"measuringUnit":"ks","priceNet":0.5,"vatRate":20}]}]}'
+```
 
-Response contains array of card objects with their supplier and items. If you are planning to use item `id`s you should store them now.  For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
+Kotlin:
+```kotlin
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "cards": [{
+                "inventoryId": 1,
+                "createTime": "17.02.2022 14:04:03",
+                "placedTime": "17.02.2022 14:04:03",
+                "type": "RECEIPT_CARD",
+                "items": [{
+                    "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+                    "amount": 100,
+                    "measuringUnit": "ks",
+                    "priceNet": 0.5,
+                    "vatRate": 20
+                }]
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+```
 
-Contents of data for this response:
+### Response
 
-| field name |                type                | Description                         |
-| :--------- | :--------------------------------: | :---------------------------------- |
-| cards      | array of stock change card objects | Stock change cards with their items |
+Returns the created or updated cards with their items in `data.cards`. Capture item IDs from this response if you need them for future updates.
 
-
-**Response Example**
+### Response example
 
 ```json
 {
-    "data": {
-        
+  "success": true,
+  "data": {
     "cards": [
       {
         "id": 1,
@@ -257,58 +352,56 @@ Contents of data for this response:
         "createTime": "17.02.2022 14:04:03",
         "placedTime": "17.02.2022 14:04:03",
         "type": "RECEIPT_CARD",
-        "documentId": "1234",
         "documentType": 1,
+        "documentId": "1234",
         "supplier": {
           "id": 1,
+          "name": "Silvia",
           "address": "Street no. 1",
           "city": "Bratislava",
-          "contactPerson": "Julia",
           "country": "Slovakia",
-          "mail": "abc@cde.efg",
-          "icDph": "12345",
-          "ico": "44444444",
-          "name": "Silvia",
+          "contactPerson": "Julia",
+          "email": "abc@cde.efg",
           "phone": "1234567890",
+          "ico": "44444444",
+          "icDph": "12345",
           "registration": true,
           "registrationDate": "12.05.2022 00:00:00",
           "registrationNumber": "55"
         },
         "orderNumber": "12",
-        "deliveryNote": "delivery note",
-        "note": "Note",
+        "deliveryNote": "DN-0042",
+        "note": "Received in good condition",
         "items": [
           {
             "id": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "stockItemTitle": "Apple",
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-            "stockItemTitle": "Apple",
             "vatRate": 20
           }
         ]
       }
-      ]
-    },
-    "success": true
+    ]
+  }
 }
-
-
-
 ```
 
-### Delete
+---
 
-For deleting cards only option is to use their `ids`. It is important to note that card items cannot exist without card and will be deleted along with the card. Deleting card does not affect supplier in case it was stored using [supplier](supplier.md) endpoint.
+## DELETE
 
-**Request data**
+Delete stock change cards by their IDs. Card items are deleted along with their card. Deleting a card does not affect supplier records stored via the [supplier](supplier.md) endpoint.
 
-| field name |      type       | Description                                             |
-| :--------- | :-------------: | :------------------------------------------------------ |
-| ids        | list of numbers | long, ids of stock change cards that are to be deleted. |
+### Request fields
 
-**Request Example**
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `ids` | `number[]` | yes | IDs of cards to delete |
+
+### Request example
 
 ```json
 {
@@ -318,71 +411,66 @@ For deleting cards only option is to use their `ids`. It is important to note th
   }
 }
 ```
-**Response**
 
-Successful delete request will return array of card objects that were deleted. If there are any problems and response success field is false, then there will be no changes to stored data.  For the detailed definition of objects refer to the [Object documentation](storehouse%20objects.md) in wiki.
+### Code examples
 
+HTTPie:
+```bash
+http POST $BASE_URL/api/v1/inventory/card \
+  "Authorization:Bearer $TOKEN" \
+  action=DELETE \
+  data:='{"ids":[1,2,3]}'
+```
 
-| field name |    type     | Description                                                  |
-| :--------- | :---------: | :----------------------------------------------------------- |
-| data       | json object | All successful responses contain data field that contains json with requested data. This field is only set if success is true. |
-| success    |   boolean   | Indicates whether request was successfully processed or not, if its false there is error message in response as well. |
-| error      |   string    | Error message with cause of failure. This field is only set if success is false. |
+Kotlin:
+```kotlin
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "ids": [1, 2, 3]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
-Contents of data for this response:
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+```
 
-| field name |                type                | Description                 |
-| :--------- | :--------------------------------: | :-------------------------- |
-| cards      | array of stock change card objects | Deleted stock change cards. |
+### Response
 
-**Response Example**
+Returns the deleted cards in `data.cards`. If `success` is `false`, no cards were deleted.
 
+### Response example
 
 ```json
 {
-    "data": {
-        
+  "success": true,
+  "data": {
     "cards": [
       {
         "id": 1,
         "inventoryId": 1,
         "createTime": "17.02.2022 14:04:03",
-        "placedTime": "17.02.2022 14:04:03",
         "type": "RECEIPT_CARD",
-        "documentId": "1234",
-        "documentType": 1,
-        "supplier": {
-          "id": 1,
-          "address": "Street no. 1",
-          "city": "Bratislava",
-          "contactPerson": "Julia",
-          "country": "Slovakia",
-          "mail": "abc@cde.efg",
-          "icDph": "12345",
-          "ico": "44444444",
-          "name": "Silvia",
-          "phone": "1234567890",
-          "registration": true,
-          "registrationDate": "12.05.2022 00:00:00",
-          "registrationNumber": "55"
-        },
-        "orderNumber": "12",
-        "deliveryNote": "delivery note",
-        "note": "Note",
         "items": [
           {
             "id": 1,
+            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+            "stockItemTitle": "Apple",
             "amount": 100,
             "measuringUnit": "ks",
             "priceNet": 0.5,
-            "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-            "stockItemTitle": "Apple",
             "vatRate": 20
           }
         ]
       }
-      ]
-    },
-    "success": true
+    ]
+  }
 }
 ```

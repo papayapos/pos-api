@@ -1,113 +1,162 @@
-**Endpoint: /api/v1/areas**
+# POST /api/v1/areas
 
-[Get](#GET)
+CRUD operations for areas (tables).
 
-[UPDATE](#UPDATE)
+**Auth:** `Authorization: Bearer <token>`
 
-### GET ###
+Sections: [GET](#get) | [UPDATE](#update)
 
-For getting ids of all areas (tables)
+---
 
-* Send list of `id` to show only those areas.
+## GET
 
-**Request data**
+Fetch all areas or a filtered subset by ID.
 
-Send just empty ids list to get all areas. Or send ids to get particular set of areas.
+### Request fields
 
-| field name |    type     | Description                             |
-| :--------- | :---------: | :-------------------------------------- |
-| ids        | Array[Long] | ids of areas (tables) to get data about |
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `ids` | `number[]` | no | IDs of areas to fetch. Omit or send empty array to get all areas. |
 
-**Request Example**
+### Request examples
 
-For getting all areas, you can send empty data.
+All areas:
+
+```json
+{
+  "action": "GET",
+  "data": {}
+}
+```
+
+Specific areas by ID:
 
 ```json
 {
   "action": "GET",
   "data": {
-    "ids": []
+    "ids": [3, 4, 5]
   }
 }
 ```
 
-**Response**
+### Response
 
-| field name    |  type  | Description                       |
-| :------------ | :----: | :-------------------------------- |
-| id            |  Long  | id of the area (table)            |
-| name          | String | name of the area                  |
-| numberOfSeats |  Long  | number of seats that the area has |
-| roomId        |  Long  | id of room                        |
+`data.areas` — array of area objects:
 
-**Response Example**
+| Field | Type | Description |
+|---|---|---|
+| `id` | number | ID of the area (table) |
+| `name` | string | Name of the area |
+| `numberOfSeats` | number | Number of seats at this area |
+| `roomId` | number | ID of the room this area belongs to |
+
+### Response example
 
 ```json
 {
-    "data": {
-        "areas": [
-            {
-                "id": 3,
-                "name": "INT 01",
-                "numberOfSeats": 0,
-                "roomId": 1
-            },
-            {
-                "id": 4,
-                "name": "INT 02",
-                "numberOfSeats": 0,
-                "roomId": 1
-            },
-            {
-                "id": 5,
-                "name": "INT 03",
-                "numberOfSeats": 0,
-                "roomId": 1
-            },
-            {
-                "id": 6,
-                "name": "TER 01",
-                "numberOfSeats": 0,
-                "roomId": 2
-            },
-            {
-                "id": 7,
-                "name": "TER 02",
-                "numberOfSeats": 0,
-                "roomId": 2
-            },
-            {
-                "id": 8,
-                "name": "TER 03",
-                "numberOfSeats": 0,
-                "roomId": 2
-            }
-        ]
-    },
-    "success": true
+  "success": true,
+  "data": {
+    "areas": [
+      {
+        "id": 3,
+        "name": "INT 01",
+        "numberOfSeats": 0,
+        "roomId": 1
+      },
+      {
+        "id": 4,
+        "name": "INT 02",
+        "numberOfSeats": 0,
+        "roomId": 1
+      },
+      {
+        "id": 6,
+        "name": "TER 01",
+        "numberOfSeats": 0,
+        "roomId": 2
+      }
+    ]
+  }
 }
 ```
 
-### UPDATE ###
+### Code examples
 
-Create or update an area
+HTTPie — get all areas:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
 
-* requests with `id` update an existing area
-* request without `id` creates a new area (`roomId` is required)
+HTTPie — get specific areas:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=GET \
+  data:='{"ids":[3,4,5]}'
+```
 
-**Request data**
+Kotlin:
+```kotlin
+// Get all areas
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
-| field name |    type     | Description                             |
-| :--------- | :---------: | :-------------------------------------- |
-| id         | Long        | id of table to update                   |
-| name       | String      | name of table |
-| numberOfSeats| Integer   | number of seats at the table |
-| roomId     | Long | id of room (parent area) |
+// Get specific areas
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "ids": [3, 4, 5]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
 
-**Request Example**
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
+```
 
-Create new table
+---
+
+## UPDATE
+
+Create or update an area.
+
+- Request **without** `id` → creates a new area (`roomId` required).
+- Request **with** `id` → updates the existing area. `roomId` is optional; the area stays in its current room if not provided.
+
+### Request fields
+
+| Field | Type | Required | Description |
+|---|---|:---:|---|
+| `id` | number | no | ID of the area to update. Omit to create a new area. |
+| `name` | string | no | Name of the area |
+| `numberOfSeats` | number | no | Number of seats at this area |
+| `roomId` | number | yes (create) | ID of the room this area belongs to. Required when creating. |
+
+### Request examples
+
+Create a new area:
 
 ```json
 {
@@ -119,16 +168,97 @@ Create new table
 }
 ```
 
-Update existing table. `roomId` is optional - table will remain assigned to its current room if no value is sent.
+Update an existing area:
 
 ```json
 {
   "action": "UPDATE",
   "data": {
-    "id": 4
-    "name": "rename table",
+    "id": 4,
+    "name": "renamed table",
     "numberOfSeats": 2
   }
 }
 ```
 
+### Response
+
+Returns the created or updated area object in `data.areas`.
+
+### Response example
+
+```json
+{
+  "success": true,
+  "data": {
+    "areas": [
+      {
+        "id": 4,
+        "name": "renamed table",
+        "numberOfSeats": 2,
+        "roomId": 1
+      }
+    ]
+  }
+}
+```
+
+### Code examples
+
+HTTPie — create new area:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"name":"new table","roomId":1}'
+```
+
+HTTPie — update existing area:
+```bash
+http POST $BASE_URL/api/v1/areas \
+  "Authorization:Bearer $TOKEN" \
+  action=UPDATE \
+  data:='{"id":4,"name":"renamed table","numberOfSeats":2}'
+```
+
+Kotlin:
+```kotlin
+// Create new area
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "name": "new table",
+            "roomId": 1
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
+
+// Update existing area
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "id": 4,
+            "name": "renamed table",
+            "numberOfSeats": 2
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
+```
