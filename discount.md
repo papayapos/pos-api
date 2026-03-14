@@ -74,12 +74,42 @@ http POST $BASE_URL/api/v1/transaction/discount \
 Kotlin:
 ```kotlin
 // Discount a single entry by 20%
-println(papayaPost("/api/v1/transaction/discount", "UPDATE",
-    """{"accountingEntryId":"6b2b82c2-3423-4905-966a-d66811e0b88a","discountRate":0.8}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "accountingEntryId": "6b2b82c2-3423-4905-966a-d66811e0b88a",
+            "discountRate": 0.8
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/discount")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Discount entire transaction by 20%
-println(papayaPost("/api/v1/transaction/discount", "UPDATE",
-    """{"accountingTransactionId":"d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d","discountRate":0.8}"""))
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "accountingTransactionId": "d18926c3-c4f1-4e1e-94a6-e47c2e5afa0d",
+            "discountRate": 0.8
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/discount")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response examples

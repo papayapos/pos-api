@@ -69,8 +69,23 @@ http POST $BASE_URL/api/v1/transaction/accountingEntry/date \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingEntry/date", "GET",
-    """{"fromDate":1713873874129,"toDate":1713873934000}"""))
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "fromDate": 1713873874129,
+            "toDate": 1713873934000
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingEntry/date")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example

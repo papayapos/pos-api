@@ -21,28 +21,13 @@ Add to `build.gradle.kts`:
 implementation("com.squareup.okhttp3:okhttp:4.12.0")
 ```
 
-Recommended helper to avoid repetition:
+Imports used in all examples:
 
 ```kotlin
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-
-val client = OkHttpClient()
-val BASE_URL = "https://your.papayapos.domain"
-val TOKEN = "your_access_token"
-
-fun papayaPost(path: String, action: String, data: String = "{}"): String {
-    val body = """{"action":"$action","data":$data}"""
-        .toRequestBody("application/json".toMediaType())
-    val request = Request.Builder()
-        .url("$BASE_URL$path")
-        .addHeader("Authorization", "Bearer $TOKEN")
-        .post(body)
-        .build()
-    return client.newCall(request).execute().use { it.body!!.string() }
-}
 ```
 
 ---

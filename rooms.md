@@ -81,7 +81,20 @@ http POST $BASE_URL/api/v1/areas/rooms \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/areas/rooms", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ---
@@ -166,8 +179,39 @@ http POST $BASE_URL/api/v1/areas/rooms \
 Kotlin:
 ```kotlin
 // Create room
-println(papayaPost("/api/v1/areas/rooms", "UPDATE", """{"name":"new room"}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "name": "new room"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Update room
-println(papayaPost("/api/v1/areas/rooms", "UPDATE", """{"id":2,"name":"renamed room"}"""))
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "id": 2,
+            "name": "renamed room"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas/rooms")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```

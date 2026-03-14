@@ -101,11 +101,41 @@ http POST $BASE_URL/api/v1/inventory/card \
 Kotlin:
 ```kotlin
 // Get by IDs
-println(papayaPost("/api/v1/inventory/card", "GET", """{"ids":[1,2,3]}"""))
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "ids": [1, 2, 3]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get by date range
-println(papayaPost("/api/v1/inventory/card", "GET",
-    """{"from":"01.01.2024 00:00:00","to":"31.01.2024 23:59:59"}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "from": "01.01.2024 00:00:00",
+            "to": "31.01.2024 23:59:59"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -275,20 +305,34 @@ http POST $BASE_URL/api/v1/inventory/card \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/inventory/card", "UPDATE", """
-    {"cards":[{
-        "inventoryId":1,
-        "createTime":"17.02.2022 14:04:03",
-        "placedTime":"17.02.2022 14:04:03",
-        "type":"RECEIPT_CARD",
-        "items":[{
-            "stockItemId":"27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
-            "amount":100,
-            "measuringUnit":"ks",
-            "priceNet":0.5,
-            "vatRate":20
-        }]
-    }]}""".trimIndent()))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "cards": [{
+                "inventoryId": 1,
+                "createTime": "17.02.2022 14:04:03",
+                "placedTime": "17.02.2022 14:04:03",
+                "type": "RECEIPT_CARD",
+                "items": [{
+                    "stockItemId": "27fd9916-d6ee-43d7-a3a4-0946f41b3c0f",
+                    "amount": 100,
+                    "measuringUnit": "ks",
+                    "priceNet": 0.5,
+                    "vatRate": 20
+                }]
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response
@@ -380,7 +424,22 @@ http POST $BASE_URL/api/v1/inventory/card \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/inventory/card", "DELETE", """{"ids":[1,2,3]}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "ids": [1, 2, 3]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/card")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response

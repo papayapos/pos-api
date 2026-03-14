@@ -78,11 +78,38 @@ http POST $BASE_URL/api/v1/memberCard \
 Kotlin:
 ```kotlin
 // Get all active member cards
-println(papayaPost("/api/v1/memberCard", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/memberCard")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get single card by UUID
-println(papayaPost("/api/v1/memberCard", "GET",
-    """{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f"}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "uuid": "ac9aef30-9c11-4f53-b59e-f2af98c3e13f"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/memberCard")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -180,12 +207,44 @@ http POST $BASE_URL/api/v1/memberCard \
 Kotlin:
 ```kotlin
 // Create new member card
-println(papayaPost("/api/v1/memberCard", "UPDATE",
-    """{"firstName":"John","lastName":"Doe","cardId":"123","discount":5}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "cardId": "123",
+            "discount": 5
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/memberCard")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Soft-delete card
-println(papayaPost("/api/v1/memberCard", "UPDATE",
-    """{"uuid":"ac9aef30-9c11-4f53-b59e-f2af98c3e13f","deleted":true}"""))
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "uuid": "ac9aef30-9c11-4f53-b59e-f2af98c3e13f",
+            "deleted": true
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/memberCard")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response

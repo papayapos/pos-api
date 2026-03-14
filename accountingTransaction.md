@@ -60,8 +60,22 @@ http POST $BASE_URL/api/v1/transaction/accountingTransaction \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingTransaction", "GET",
-    """{"areaId":2}"""))
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "areaId": 2
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingTransaction")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -161,12 +175,44 @@ http POST $BASE_URL/api/v1/transaction/accountingTransaction \
 Kotlin:
 ```kotlin
 // Quick receipt at a table
-println(papayaPost("/api/v1/transaction/accountingTransaction", "UPDATE",
-    """{"accountingTransactionType":"RECEIPT","areaId":9}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "accountingTransactionType": "RECEIPT",
+            "areaId": 9
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingTransaction")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Invoice with customer card
-println(papayaPost("/api/v1/transaction/accountingTransaction", "UPDATE",
-    """{"accountingTransactionType":"INVOICE","invoiceNumber":"INV44331","memberCardId":"12345","salePlaceId":"a25805ba-dd76-4c08-8188-5e64bc2e1645"}"""))
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "accountingTransactionType": "INVOICE",
+            "invoiceNumber": "INV44331",
+            "memberCardId": "12345",
+            "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingTransaction")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response
@@ -234,8 +280,22 @@ http POST $BASE_URL/api/v1/transaction/accountingTransaction \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingTransaction", "DELETE",
-    """{"id":"d703ca6d-c57d-408a-a449-36bdfd44a0eb"}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "id": "d703ca6d-c57d-408a-a449-36bdfd44a0eb"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingTransaction")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response

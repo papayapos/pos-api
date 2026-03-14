@@ -86,8 +86,36 @@ http POST $BASE_URL/api/v1/salePlace \
 Kotlin:
 ```kotlin
 // Get all sale places
-println(papayaPost("/api/v1/salePlace", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/salePlace")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get one sale place
-println(papayaPost("/api/v1/salePlace", "GET", """{"uuid":"a25805ba-dd76-4c08-8188-5e64bc2e1645"}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "uuid": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/salePlace")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```

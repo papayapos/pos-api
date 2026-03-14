@@ -114,11 +114,38 @@ http POST $BASE_URL/api/v1/catalog/item \
 Kotlin:
 ```kotlin
 // Get all catalog items
-println(papayaPost("/api/v1/catalog/item", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/catalog/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get items from specific categories
-println(papayaPost("/api/v1/catalog/item", "GET",
-    """{"categories":["5de57c08-6b12-4de5-8d6f-edccaf82cd2d"]}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "categories": ["5de57c08-6b12-4de5-8d6f-edccaf82cd2d"]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/catalog/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example

@@ -144,11 +144,38 @@ http POST $BASE_URL/api/v1/inventory/item \
 Kotlin:
 ```kotlin
 // Get all items
-println(papayaPost("/api/v1/inventory/item", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Filter by product codes
-println(papayaPost("/api/v1/inventory/item", "GET",
-    """{"productCodes":["123","5555"]}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "productCodes": ["123", "5555"]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ---
@@ -282,10 +309,32 @@ http POST $BASE_URL/api/v1/inventory/item \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/inventory/item", "UPDATE", """
-    {"groups":[{"id":1,"name":"Fruit","type":"OTHER","items":[
-        {"title":"Apple","priceFixed":5,"vatRate":20,"measuringUnit":"kg"}
-    ]}]}""".trimIndent()))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "groups": [{
+                "id": 1,
+                "name": "Fruit",
+                "type": "OTHER",
+                "items": [{
+                    "title": "Apple",
+                    "priceFixed": 5,
+                    "vatRate": 20,
+                    "measuringUnit": "kg"
+                }]
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ---
@@ -375,11 +424,40 @@ http POST $BASE_URL/api/v1/inventory/item \
 Kotlin:
 ```kotlin
 // Delete items
-println(papayaPost("/api/v1/inventory/item", "DELETE",
-    """{"itemIds":["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"]}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "itemIds": ["27fd9916-d6ee-43d7-a3a4-0946f41b3c0f"]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Delete group
-println(papayaPost("/api/v1/inventory/item", "DELETE", """{"groupIds":[1]}"""))
+val body2 = """
+    {
+        "action": "DELETE",
+        "data": {
+            "groupIds": [1]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory/item")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example

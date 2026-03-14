@@ -65,8 +65,22 @@ http POST $BASE_URL/api/v1/transaction/accountingEntry \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingEntry", "GET",
-    """{"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea"}"""))
+val body = """
+    {
+        "action": "GET",
+        "data": {
+            "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingEntry")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -145,11 +159,27 @@ http POST $BASE_URL/api/v1/transaction/accountingEntry \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingEntry", "UPDATE", """
-    {"accountingTransactionId":"a7e92c6d-8db5-4753-8613-de50a6b710ea",
-     "accountableItemId":"b6aeb536-5829-41f1-ab86-aba8f69d614b",
-     "count":2,"price":3.50,"state":"CREATED","type":"SALE"}
-""".trimIndent()))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "accountingTransactionId": "a7e92c6d-8db5-4753-8613-de50a6b710ea",
+            "accountableItemId": "b6aeb536-5829-41f1-ab86-aba8f69d614b",
+            "count": 2,
+            "price": 3.50,
+            "state": "CREATED",
+            "type": "SALE"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingEntry")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response
@@ -191,8 +221,22 @@ http POST $BASE_URL/api/v1/transaction/accountingEntry \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/transaction/accountingEntry", "DELETE",
-    """{"id":"868d73c9-3b06-4642-a861-1b0d28d0de9d"}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "id": "868d73c9-3b06-4642-a861-1b0d28d0de9d"
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/accountingEntry")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response

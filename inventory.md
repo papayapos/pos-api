@@ -109,11 +109,39 @@ http POST $BASE_URL/api/v1/inventory \
 Kotlin:
 ```kotlin
 // Get all inventories
-println(papayaPost("/api/v1/inventory", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get inventory with item amounts
-println(papayaPost("/api/v1/inventory", "GET",
-    """{"inventories":[{"inventoryId":1}],"withAmounts":true}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "inventories": [{ "inventoryId": 1 }],
+            "withAmounts": true
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -224,8 +252,26 @@ http POST $BASE_URL/api/v1/inventory \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/inventory", "UPDATE",
-    """{"inventories":[{"id":1,"name":"Main inventory","description":"Primary storehouse"}]}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "inventories": [{
+                "id": 1,
+                "name": "Main inventory",
+                "description": "Primary storehouse"
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ---
@@ -292,7 +338,22 @@ http POST $BASE_URL/api/v1/inventory \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/inventory", "DELETE", """{"ids":[2,3]}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "ids": [2, 3]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/inventory")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Errors

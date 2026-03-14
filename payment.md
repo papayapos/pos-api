@@ -122,19 +122,42 @@ http POST $BASE_URL/api/v1/transaction/payment \
 
 Kotlin — cash payment:
 ```kotlin
-println(papayaPost("/api/v1/transaction/payment", "UPDATE", """
-    {"transactionId":"3d25d1e3-1da3-41cc-a373-129d7af28d30",
-     "accountingEntries":[{
-         "id":"8673a8ad-c4ae-40e8-ba44-c402298cab03",
-         "accountingTransactionId":"3d25d1e3-1da3-41cc-a373-129d7af28d30",
-         "accountableItemId":"cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
-         "accountingEntryState":"CREATED","accountingEntryType":"SALE",
-         "title":"Croissant","count":12,"quantity":1,"unit":"ks",
-         "priceAmount":2.5,"priceAdjustCoef":1,"txAdjustCoef":1,
-         "priceCurrency":"EUR","createTime":"11.10.2022 12:25:40"
-     }],
-     "payments":[{"paymentType":"CASH","amount":30}]}
-""".trimIndent()))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "transactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
+            "accountingEntries": [{
+                "id": "8673a8ad-c4ae-40e8-ba44-c402298cab03",
+                "accountingTransactionId": "3d25d1e3-1da3-41cc-a373-129d7af28d30",
+                "accountableItemId": "cbceb73a-25e7-4b83-a15d-c3cef5ef5f32",
+                "accountingEntryState": "CREATED",
+                "accountingEntryType": "SALE",
+                "title": "Croissant",
+                "count": 12,
+                "quantity": 1,
+                "unit": "ks",
+                "priceAmount": 2.5,
+                "priceAdjustCoef": 1,
+                "txAdjustCoef": 1,
+                "priceCurrency": "EUR",
+                "createTime": "11.10.2022 12:25:40"
+            }],
+            "payments": [{
+                "paymentType": "CASH",
+                "amount": 30
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/transaction/payment")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response examples

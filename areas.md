@@ -102,10 +102,38 @@ http POST $BASE_URL/api/v1/areas \
 Kotlin:
 ```kotlin
 // Get all areas
-println(papayaPost("/api/v1/areas", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get specific areas
-println(papayaPost("/api/v1/areas", "GET", """{"ids":[3,4,5]}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "ids": [3, 4, 5]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ---
@@ -196,8 +224,41 @@ http POST $BASE_URL/api/v1/areas \
 Kotlin:
 ```kotlin
 // Create new area
-println(papayaPost("/api/v1/areas", "UPDATE", """{"name":"new table","roomId":1}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "name": "new table",
+            "roomId": 1
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Update existing area
-println(papayaPost("/api/v1/areas", "UPDATE", """{"id":4,"name":"renamed table","numberOfSeats":2}"""))
+val body2 = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "id": 4,
+            "name": "renamed table",
+            "numberOfSeats": 2
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/areas")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```

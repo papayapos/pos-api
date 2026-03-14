@@ -68,10 +68,38 @@ http POST $BASE_URL/api/v1/supplier \
 Kotlin:
 ```kotlin
 // Get all suppliers
-println(papayaPost("/api/v1/supplier", "GET"))
+val body = """
+    {
+        "action": "GET",
+        "data": {}
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/supplier")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 
 // Get by IDs
-println(papayaPost("/api/v1/supplier", "GET", """{"ids":[1,2]}"""))
+val body2 = """
+    {
+        "action": "GET",
+        "data": {
+            "ids": [1, 2]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/supplier")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body2)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response example
@@ -178,8 +206,28 @@ http POST $BASE_URL/api/v1/supplier \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/supplier", "UPDATE",
-    """{"suppliers":[{"id":1,"name":"Silvia","city":"Bratislava","country":"Slovakia","email":"abc@cde.efg"}]}"""))
+val body = """
+    {
+        "action": "UPDATE",
+        "data": {
+            "suppliers": [{
+                "id": 1,
+                "name": "Silvia",
+                "city": "Bratislava",
+                "country": "Slovakia",
+                "email": "abc@cde.efg"
+            }]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/supplier")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response
@@ -248,7 +296,22 @@ http POST $BASE_URL/api/v1/supplier \
 
 Kotlin:
 ```kotlin
-println(papayaPost("/api/v1/supplier", "DELETE", """{"ids":[1,2]}"""))
+val body = """
+    {
+        "action": "DELETE",
+        "data": {
+            "ids": [1, 2]
+        }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+OkHttpClient().newCall(
+    Request.Builder()
+        .url("$BASE_URL/api/v1/supplier")
+        .addHeader("Authorization", "Bearer $TOKEN")
+        .post(body)
+        .build()
+).execute().body?.string()
 ```
 
 ### Response
