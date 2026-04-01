@@ -78,7 +78,9 @@ OkHttpClient().newCall(
 ).execute().body?.string()
 ```
 
-### Response example
+### Response examples
+
+Opened transaction:
 
 ```json
 {
@@ -89,17 +91,50 @@ OkHttpClient().newCall(
         "id": "78c06986-3a94-4993-8b3b-09bbb73265da",
         "humanId": "100",
         "accountingTransactionState": "OPENED",
+        "type": "RECEIPT",
         "area": {
           "id": 2,
           "numberOfSeats": 0
         },
         "createTime": "30.09.2022 17:07:48",
-        "createdByUserId": 1,
+        "closeTime": null,
         "priceGross": 12.2,
+        "priceNet": null,
+        "priceVat": null,
         "transactionPriceAdjustmentCoefficient": 1,
+        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
         "customerUuid": "29cd0081-9e47-4cbf-b124-354f2d01fbec",
         "memberCardId": "123456",
-        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645"
+        "footer": null
+      }
+    ]
+  }
+}
+```
+
+Closed transaction (after payment):
+
+```json
+{
+  "success": true,
+  "data": {
+    "accountingTransactions": [
+      {
+        "id": "d9acb831-83be-4451-8b20-ba9d65f2e90d",
+        "humanId": "101",
+        "accountingTransactionState": "CLOSED",
+        "type": "RECEIPT",
+        "area": null,
+        "createTime": 1775075755021,
+        "closeTime": null,
+        "priceGross": 1.00,
+        "priceNet": null,
+        "priceVat": null,
+        "transactionPriceAdjustmentCoefficient": 1,
+        "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
+        "customerUuid": null,
+        "memberCardId": null,
+        "footer": null
       }
     ]
   }

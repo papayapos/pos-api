@@ -187,45 +187,6 @@ Cash payment — opened AccountingTransaction:
 }
 ```
 
-Cash payment — closed AccountingTransaction:
-
-```json
-{
-  "success": true,
-  "data": {
-    "newTransaction": {
-      "id": "d9acb831-83be-4451-8b20-ba9d65f2e90d",
-      "area": null,
-      "type": "RECEIPT",
-      "createTime": 1775075755021,
-      "closeTime": null,
-      "priceGross": 1.00,
-      "priceNet": null,
-      "priceVat": null,
-      "accountingTransactionState": "CLOSED",
-      "humanId": "101",
-      "transactionPriceAdjustmentCoefficient": 1,
-      "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
-      "customerUuid": null,
-      "memberCardId": null,
-      "footer": null
-    },
-    "payments": [
-      {
-        "id": null,
-        "accountingTransactionId": "d9acb831-83be-4451-8b20-ba9d65f2e90d",
-        "paymentType": "CASH",
-        "amount": 1,
-        "nominalCompensation": null,
-        "cardDataId": null,
-        "cardData": null
-      }
-    ]
-  },
-  "operationId": "02d77a6a-e84e-4a3e-a060-22d2604f9b73"
-}
-```
-
 Card payment response:
 
 ```json
