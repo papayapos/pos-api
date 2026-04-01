@@ -17,7 +17,7 @@ Pay for a transaction. Provide the entries that make up the bill and the payment
 | Field | Type | Required | Description |
 |---|---|:---:|---|
 | `transactionId` | string (UUID) | yes | ID of the transaction to pay |
-| `accountingEntries` | object[] | yes | Entries (line items) that form the bill. Use the entry objects from [GET /accountingEntry](accountingEntry.md). |
+| `accountingEntries` | object[] | yes | Entries (line items) that form the bill. Use the entry objects from [GET /accountingEntry](accountingEntry.md). **Important:** the API returns `createTime` as a Unix timestamp in milliseconds, but this endpoint expects it as a formatted string `"dd.MM.yyyy HH:mm:ss"`. Convert before sending. |
 | `payments` | object[] | yes | One or more payments covering the total. See [TransactionPaymentModel](transaction_objects.md). |
 | `invoiceId` | string | no | Invoice number to print on the invoice |
 
