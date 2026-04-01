@@ -17,7 +17,7 @@ Pay for a transaction. Provide the entries that make up the bill and the payment
 | Field | Type | Required | Description |
 |---|---|:---:|---|
 | `transactionId` | string (UUID) | yes | ID of the transaction to pay |
-| `accountingEntries` | object[] | yes | Entries (line items) that form the bill. Use the entry objects from [GET /accountingEntry](accountingEntry.md). |
+| `accountingEntries` | object[] | yes | Entries (line items) that form the bill. Use the entry objects from [GET /accountingEntry](accountingEntry.md). **Important:** the API returns `createTime` as a Unix timestamp in milliseconds, but this endpoint expects it as a formatted string `"dd.MM.yyyy HH:mm:ss"`. Convert before sending. |
 | `payments` | object[] | yes | One or more payments covering the total. See [TransactionPaymentModel](transaction_objects.md). |
 | `invoiceId` | string | no | Invoice number to print on the invoice |
 
@@ -162,7 +162,7 @@ OkHttpClient().newCall(
 
 ### Response examples
 
-Cash payment response:
+Cash payment — opened AccountingTransaction:
 
 ```json
 {
@@ -170,11 +170,10 @@ Cash payment response:
   "data": {
     "newTransaction": {
       "id": "acfcad66-489c-4d31-92a7-0e39e627e2c9",
-      "type": "INVOICE",
-      "createTime": "11.10.2022 12:31:49",
+      "type": "RECEIPT",
+      "createTime": 1665484309000,
       "priceGross": 30.00,
       "accountingTransactionState": "OPENED",
-      "createdByUserId": 1,
       "transactionPriceAdjustmentCoefficient": 1
     },
     "payments": [
@@ -185,6 +184,45 @@ Cash payment response:
       }
     ]
   }
+}
+```
+
+Cash payment — closed AccountingTransaction:
+
+```json
+{
+  "success": true,
+  "data": {
+    "newTransaction": {
+      "id": "d9acb831-83be-4451-8b20-ba9d65f2e90d",
+      "area": null,
+      "type": "RECEIPT",
+      "createTime": 1775075755021,
+      "closeTime": null,
+      "priceGross": 1.00,
+      "priceNet": null,
+      "priceVat": null,
+      "accountingTransactionState": "CLOSED",
+      "humanId": "101",
+      "transactionPriceAdjustmentCoefficient": 1,
+      "salePlaceId": "a25805ba-dd76-4c08-8188-5e64bc2e1645",
+      "customerUuid": null,
+      "memberCardId": null,
+      "footer": null
+    },
+    "payments": [
+      {
+        "id": null,
+        "accountingTransactionId": "d9acb831-83be-4451-8b20-ba9d65f2e90d",
+        "paymentType": "CASH",
+        "amount": 1,
+        "nominalCompensation": null,
+        "cardDataId": null,
+        "cardData": null
+      }
+    ]
+  },
+  "operationId": "02d77a6a-e84e-4a3e-a060-22d2604f9b73"
 }
 ```
 

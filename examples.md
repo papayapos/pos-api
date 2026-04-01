@@ -63,6 +63,8 @@ Response returns `data.accountingEntries[0]` — save the full entry object as `
 
 Use the full entry objects returned in steps 2a and 2b. The `amount` must equal the sum of all entries.
 
+> **Note:** The API returns `createTime` on entry objects as a Unix timestamp in milliseconds (e.g. `1775075483007`). Before passing entries to the payment endpoint, convert `createTime` to the format `"dd.MM.yyyy HH:mm:ss"` (e.g. `"01.04.2026 22:31:23"`). Sending the raw timestamp will cause a server-side parse error.
+
 ```json
 {
   "action": "UPDATE",
@@ -124,6 +126,8 @@ Response returns `data.accountingEntries[0]` — save the full entry object as `
 ---
 
 ### Step 3 — Pay by card
+
+> **Note:** Convert `createTime` on entry objects from Unix milliseconds to `"dd.MM.yyyy HH:mm:ss"` before sending. See Scenario 1, Step 3.
 
 ```json
 {
