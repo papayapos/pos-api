@@ -32,6 +32,46 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 ---
 
+## Base URL (v4.0.0+)
+
+From version 4.0.0, the full URL for each endpoint is:
+
+```
+https://api.papayapos.sk/external/<client-id>/api/v1/<endpoint>
+```
+
+`<client-id>` is the UUID assigned to your Papaya POS account. Version 4.0.0 also changed the auth header from `Authorization` to `Api-token`.
+
+For example, a client with ID `0f67fe5c-0000-0000-0000-e3a937ed1e2d` calling the areas endpoint:
+
+### HTTPie
+
+```bash
+http POST https://api.papayapos.sk/external/0f67fe5c-0000-0000-0000-e3a937ed1e2d/api/v1/areas \
+  Api-token:"Bearer $TOKEN" \
+  action=GET \
+  data:='{}'
+```
+
+### Kotlin (OkHttp)
+
+```kotlin
+val body = """
+    {
+      "action": "GET",
+      "data": {}
+    }
+""".trimIndent()
+
+val request = Request.Builder()
+    .url("https://api.papayapos.sk/external/0f67fe5c-0000-0000-0000-e3a937ed1e2d/api/v1/areas")
+    .post(body.toRequestBody("application/json".toMediaType()))
+    .header("Api-token", "Bearer $TOKEN")
+    .build()
+```
+
+---
+
 ## Endpoint Summary
 
 | Endpoint | Description |
