@@ -162,7 +162,32 @@ OkHttpClient().newCall(
 
 ### Response examples
 
-Cash payment response:
+Cash payment — opened AccountingTransaction:
+
+```json
+{
+  "success": true,
+  "data": {
+    "newTransaction": {
+      "id": "acfcad66-489c-4d31-92a7-0e39e627e2c9",
+      "type": "RECEIPT",
+      "createTime": 1665484309000,
+      "priceGross": 30.00,
+      "accountingTransactionState": "OPENED",
+      "transactionPriceAdjustmentCoefficient": 1
+    },
+    "payments": [
+      {
+        "accountingTransactionId": "acfcad66-489c-4d31-92a7-0e39e627e2c9",
+        "paymentType": "CASH",
+        "amount": 30
+      }
+    ]
+  }
+}
+```
+
+Cash payment — closed AccountingTransaction:
 
 ```json
 {
